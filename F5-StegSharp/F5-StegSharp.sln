@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F5-StegSharp.Data", "F5-StegSharp.Data\F5-StegSharp.Data.csproj", "{8A11EFAC-F13E-467C-AD95-DD7985E13365}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F5-StegSharp.Console", "F5-StegSharp.Console\F5-StegSharp.Console.csproj", "{51C62C56-C767-41C4-998D-6C6D3D1E96E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8A11EFAC-F13E-467C-AD95-DD7985E13365}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A11EFAC-F13E-467C-AD95-DD7985E13365}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A11EFAC-F13E-467C-AD95-DD7985E13365}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51C62C56-C767-41C4-998D-6C6D3D1E96E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51C62C56-C767-41C4-998D-6C6D3D1E96E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51C62C56-C767-41C4-998D-6C6D3D1E96E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51C62C56-C767-41C4-998D-6C6D3D1E96E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

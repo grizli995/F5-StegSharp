@@ -1,4 +1,4 @@
-﻿namespace F5_StegSharp.Data
+﻿namespace Application
 {
     public class Class1
     {
