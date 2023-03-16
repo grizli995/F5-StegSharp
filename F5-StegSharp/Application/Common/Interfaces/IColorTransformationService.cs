@@ -10,6 +10,6 @@ namespace Application.Common.Interfaces
 {
     public interface IColorTransformationService
     {
-        public YcBcRData RGBToYCbCr(Bitmap bmp);
+        public YCBCRData RGBToYCbCr(Bitmap bmp);
     }
 }

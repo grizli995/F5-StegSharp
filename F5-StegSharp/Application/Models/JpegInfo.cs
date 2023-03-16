@@ -12,6 +12,6 @@ namespace Application.Models
         public Bitmap Bitmap { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public YcBcRData YCBCRData { get; set; }
+        public YCBCRData YCBCRData { get; set; }
     }
 }

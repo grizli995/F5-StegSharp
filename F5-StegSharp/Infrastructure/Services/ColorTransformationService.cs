@@ -11,12 +11,12 @@ namespace Infrastructure.Services
 {
     public class ColorTransformationService : IColorTransformationService
     {
-        public YcBcRData RGBToYCbCr(Bitmap bmp)
+        public YCBCRData RGBToYCbCr(Bitmap bmp)
         {
             if (bmp == null)
                 throw new ArgumentNullException(nameof(bmp));
 
-            var result = new YcBcRData(bmp.Width, bmp.Height);
+            var result = new YCBCRData(bmp.Width, bmp.Height);
 
             ApplyColorTransform(bmp, result);
 
@@ -26,7 +26,7 @@ namespace Infrastructure.Services
 
         #region Util
 
-        private static void ApplyColorTransform(Bitmap bmp, YcBcRData result)
+        private static void ApplyColorTransform(Bitmap bmp, YCBCRData result)
         {
             for (int i = 0; i < bmp.Height; i++)
             {
