@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System.Drawing;
 
 public class Program
 {
@@ -24,6 +25,6 @@ public class Program
 
         Console.WriteLine("Application started.");
         var service = serviceProvider.GetService<IColorTransformationService>();
-        service.RGBToYCbCr();
+
     }
 }
