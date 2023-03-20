@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
+using Domain;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -26,7 +27,7 @@ namespace Infrastructure.Services
 
         #region Util
 
-        private static void ApplyColorTransform(Bitmap bmp, YCBCRData result)
+        private void ApplyColorTransform(Bitmap bmp, YCBCRData result)
         {
             for (int i = 0; i < bmp.Height; i++)
             {
@@ -37,12 +38,13 @@ namespace Infrastructure.Services
                     var g = color.G;
                     var b = color.B;
 
-                    result.YData[j, i] = (byte)(0.299 * r + 0.587 * g + 0.114 * b);
-                    result.CBData[j, i] = (byte)(128 + (-0.16874 * r - 0.33126 * g + 0.5 * b));
-                    result.CRData[j, i] = (byte)(128 + (0.5 * r - 0.41869 * g - 0.08131 * b));
+                    result.YData[j, i] = RGBToYCBCR.CalculateY(r, g, b);
+                    result.CBData[j, i] = RGBToYCBCR.CalculateCB(r, g, b);
+                    result.CRData[j, i] = RGBToYCBCR.CalculateCR(r, g, b);
                 }
             }
         }
+
 
         #endregion
     }
