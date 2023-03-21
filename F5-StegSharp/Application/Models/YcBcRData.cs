@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Application.Models
 {
-    public class YcBcRData
+    public class YCBCRData
     {
         public byte[,] YData { get; set; }
         public byte[,] CRData { get; set; }
         public byte[,] CBData { get; set; }
 
-        public YcBcRData(int width, int height)
+        public YCBCRData(int width, int height)
         {
-            YData = new byte[width, height];
-            CRData = new byte[width, height];
-            CBData = new byte[width, height];
+            YData = new byte[height, width];
+            CRData = new byte[height, width];
+            CBData = new byte[height, width];
         }
     }
 }

@@ -9,6 +9,9 @@ namespace Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services) 
         {
             services.AddScoped<IColorTransformationService, ColorTransformationService>();
+            services.AddScoped<IF5Service, F5Service>();
+            services.AddScoped<IDCTService, DCTService>();
+            services.AddScoped<IPaddingService, PaddingService>();
 
             return services;
         }

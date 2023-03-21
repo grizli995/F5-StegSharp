@@ -24,7 +24,12 @@ public class Program
         //service1.DoSomething();
 
         Console.WriteLine("Application started.");
-        var service = serviceProvider.GetService<IColorTransformationService>();
+        var service = serviceProvider.GetService<IF5Service>();
 
+
+
+        string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\micpic.jpg"; // replace with the path to your JPEG image file
+        Image image = Image.FromFile(filePath);
+        service.Embed(image, "test", "hidden message");
     }
 }
