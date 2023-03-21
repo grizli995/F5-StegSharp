@@ -14,9 +14,9 @@ namespace Application.Models
 
         public YCBCRData(int width, int height)
         {
-            YData = new byte[width, height];
-            CRData = new byte[width, height];
-            CBData = new byte[width, height];
+            YData = new byte[height, width];
+            CRData = new byte[height, width];
+            CBData = new byte[height, width];
         }
     }
 }
