@@ -38,9 +38,9 @@ namespace Infrastructure.Services
                     var g = color.G;
                     var b = color.B;
 
-                    result.YData[j, i] = RGBToYCBCR.CalculateY(r, g, b);
-                    result.CBData[j, i] = RGBToYCBCR.CalculateCB(r, g, b);
-                    result.CRData[j, i] = RGBToYCBCR.CalculateCR(r, g, b);
+                    result.YData[i, j] = RGBToYCBCR.CalculateY(r, g, b);
+                    result.CBData[i, j] = RGBToYCBCR.CalculateCB(r, g, b);
+                    result.CRData[i, j] = RGBToYCBCR.CalculateCR(r, g, b);
                 }
             }
         }
