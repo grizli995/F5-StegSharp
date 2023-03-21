@@ -14,5 +14,7 @@ namespace Application.Models
         public int Height { get; set; }
         public YCBCRData YCBCRData { get; set; }
         public DCTData DCTData { get; set; }
+        public DCTData QuantizedDCTData { get; set; }
+        public DCTData EmbededData { get; set; }
     }
 }
