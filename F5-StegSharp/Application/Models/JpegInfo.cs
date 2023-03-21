@@ -13,5 +13,6 @@ namespace Application.Models
         public int Width { get; set; }
         public int Height { get; set; }
         public YCBCRData YCBCRData { get; set; }
+        public DCTData DCTData { get; set; }
     }
 }
