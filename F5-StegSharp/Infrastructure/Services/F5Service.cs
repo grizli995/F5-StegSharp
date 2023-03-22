@@ -28,9 +28,11 @@ namespace Infrastructure.Services
             //Step 1 in jpeg compression - Transform image to YCBCR color space.
             jpeg.YCBCRData = _colorTransformationService.RGBToYCbCr(jpeg.Bitmap);
 
-            //Step 1 in jpeg compression - Calculate DCT 
+            //Step 2 in jpeg compression - Calculate DCT values.
             jpeg.DCTData = _dctService.CalculateDCT(jpeg.YCBCRData, jpeg.Width, jpeg.Height);
 
+            //step 3 in jpeg compression - Quantize DCT values.
+            jpeg.QuantizedDCTData = _dctService.QuantizeDCT(jpeg.DCTData, null, null);
         }
 
 

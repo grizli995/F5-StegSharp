@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
+using Domain;
 using JpegLibrary;
 using System.Runtime.CompilerServices;
 
@@ -33,6 +34,27 @@ namespace Infrastructure.Services
 
             return result;
         }
+
+        public DCTData QuantizeDCT(DCTData input, byte[] chrominanceTable, byte[] luminanceTable)
+        {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+
+            if (chrominanceTable == null)
+                chrominanceTable = JpegStandardQuantizationTable.ChrominanceTable;
+
+            if (luminanceTable == null)
+                luminanceTable = JpegStandardQuantizationTable.LuminanceTable;
+
+            var result = new DCTData();
+
+            result.YDCTData = QuantizeDCTComponent(input.YDCTData, luminanceTable);
+            result.CRDCTData = QuantizeDCTComponent(input.CRDCTData, chrominanceTable);
+            result.CBDCTData = QuantizeDCTComponent(input.CBDCTData, chrominanceTable);
+
+            return result;
+        }
+
 
         #region Util
 
@@ -140,6 +162,43 @@ namespace Infrastructure.Services
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Quantize DCT data for 1 component. Divide dct element by the quantization element with the same index.
+        /// </summary>
+        /// <param name="input">DCT data for 1 color component.</param>
+        /// <param name="quantizationTable">Quantization table.</param>
+        /// <returns>Returns new DCTData object with quantized data.</returns>
+        private JpegBlock8x8F[] QuantizeDCTComponent(JpegBlock8x8F[] input, byte[] quantizationTable)
+        {
+            var result = new JpegBlock8x8F[input.Length];
+
+            for (int iBlock = 0; iBlock < input.Length; iBlock++)
+            {
+                QuantizeDCTBlock(input, quantizationTable, result, iBlock);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Quantize DCT block.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="quantizationTable"></param>
+        /// <param name="result"></param>
+        /// <param name="iBlock">Block index.</param>
+        private static void QuantizeDCTBlock(JpegBlock8x8F[] input, byte[] quantizationTable, JpegBlock8x8F[] result, int iBlock)
+        {
+            JpegBlock8x8F tmp = input[iBlock];
+
+            for (int iElement = 0; iElement < input.Length; iElement++)
+            {
+                tmp[iElement] = (float)Math.Round((tmp[iElement] / quantizationTable[iElement]));
+            }
+
+            result[iBlock] = tmp;
         }
 
         #endregion
