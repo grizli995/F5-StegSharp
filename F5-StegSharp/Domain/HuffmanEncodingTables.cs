@@ -1,33 +1,33 @@
 ﻿namespace Domain
 {
-    public class HuffmanEncodingTables
+    public static class HuffmanEncodingTables
     {
 
-        public int[] DCLuminanceBits = {
+        public static int[] DCLuminanceBits = {
                                             0x00, 0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0
                                         };
 
-        public int[] DCLuminanceValues = {
+        public static int[] DCLuminanceValues = {
                                            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
                                        };
 
-        public int[] DCChrominanceBits = {
+        public static int[] DCChrominanceBits = {
                                              0x01, 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
                                          };
 
-        public int[] DCChrominanceValues = {
+        public static int[] DCChrominanceValues = {
                                             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
                                         };
 
-        public int[] ACLuminanceBits = {
+        public static int[] ACLuminanceBits = {
                                            0x10, 0, 2, 1, 3, 3, 2, 4, 3, 5, 5, 4, 4, 0, 0, 1, 0x7d
                                        };
 
-        public int[] ACChrominanceBits = {
+        public static int[] ACChrominanceBits = {
                                              0x11, 0, 2, 1, 2, 4, 4, 3, 4, 7, 5, 4, 4, 0, 1, 2, 0x77
                                          };
 
-        public int[] ACLuminanceValues =
+        public static int[] ACLuminanceValues =
         {
             0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12, 0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07, 0x22, 0x71,
             0x14, 0x32, 0x81, 0x91, 0xa1, 0x08, 0x23, 0x42, 0xb1, 0xc1, 0x15, 0x52, 0xd1, 0xf0, 0x24, 0x33, 0x62, 0x72,
@@ -40,7 +40,7 @@
             0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa
         };
 
-        public int[] ACChrominanceValues =
+        public static int[] ACChrominanceValues =
         {
             0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21, 0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71, 0x13, 0x22,
             0x32, 0x81, 0x08, 0x14, 0x42, 0x91, 0xa1, 0xb1, 0xc1, 0x09, 0x23, 0x33, 0x52, 0xf0, 0x15, 0x62, 0x72, 0xd1,
