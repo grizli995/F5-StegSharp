@@ -13,15 +13,19 @@ namespace Infrastructure.Services
     {
         private readonly IColorTransformationService _colorTransformationService;
         private readonly IDCTService _dctService;
+        private readonly IEncodingOrchestratorService _encodingOrchestratorService;
 
-        public F5Service(IColorTransformationService colorTransformationService, IDCTService dCTService) 
+        public F5Service(IColorTransformationService colorTransformationService, IDCTService dCTService, IEncodingOrchestratorService encodingOrchestratorService) 
         {
             this._colorTransformationService = colorTransformationService;
             this._dctService = dCTService;
+            this._encodingOrchestratorService = encodingOrchestratorService;
         }
 
         public void Embed(Image image, string password, string text)
         {
+            BinaryWriter bw = new BinaryWriter(new MemoryStream());
+
             //Create jpegInfo object
             JpegInfo jpeg = CreateJpegInfo(image);
 
@@ -33,6 +37,9 @@ namespace Infrastructure.Services
 
             //step 3 in jpeg compression - Quantize DCT values.
             jpeg.QuantizedDCTData = _dctService.QuantizeDCT(jpeg.DCTData, null, null);
+
+            //step 4 in jpeg compression - Run length encoding and huffman encoding.
+            _encodingOrchestratorService.EncodeData(jpeg.QuantizedDCTData, bw);
         }
 
 

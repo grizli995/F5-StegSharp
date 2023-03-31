@@ -37,9 +37,12 @@ namespace Infrastructure.Services
             return result;
         }
 
+        #region Util
+
         private static void AddEndOfBlockMarker(List<Tuple<int, int>> result)
         {
             var i = result.Count - 1;
+
             while (result[i].Item2 == 0)
             {
                 result.RemoveAt(i);
@@ -48,5 +51,8 @@ namespace Infrastructure.Services
 
             result.Add(new Tuple<int, int>(0, 0));
         }
+
+        #endregion
+
     }
 }
