@@ -9,7 +9,7 @@ namespace Application.Common.Interfaces
 {
     public interface IF5Service
     {
-        public void Embed(Image image, string password, string text);
+        public void Embed(Image image, string password, string text, BinaryWriter bw);
         public void Extract();
     }
 }
