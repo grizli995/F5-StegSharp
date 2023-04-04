@@ -27,10 +27,10 @@ namespace Infrastructure.Services
             foreach (var item in runLengthValuePairs)
             {
                 var currentValue = item.Item2;
-                int currentValueBitLength = CalculateBitLength(currentValue);
+                int currentValueBitLength = CalculateValueCategory(currentValue);
 
-                var code = _acCrominanceCoeffTable[item.Item1 * 10 + currentValueBitLength].Item1;
-                var size = _acCrominanceCoeffTable[item.Item1 * 10 + currentValueBitLength].Item2;
+                var code = _acCrominanceCoeffTable[item.Item1 * 16 + currentValueBitLength].Item1;
+                var size = _acCrominanceCoeffTable[item.Item1 * 16 + currentValueBitLength].Item2;
 
                 BufferIt(bw, code, size);
                 BufferIt(bw, currentValue, currentValueBitLength);
@@ -44,10 +44,11 @@ namespace Infrastructure.Services
             foreach (var item in runLengthValuePairs)
             {
                 var currentValue = item.Item2;
-                int currentValueBitLength = CalculateBitLength(currentValue);
-
-                var code = _acLuminanceCoeffTable[item.Item1 * 10 + currentValueBitLength].Item1;
-                var size = _acLuminanceCoeffTable[item.Item1 * 10 + currentValueBitLength].Item2;
+                int currentValueBitLength = CalculateValueCategory(currentValue);
+                //treba kad je currentValue = 0  da currentValuebitLenght  da bude = 0;
+                //fali mu +1 kad indeksiram.
+                var code = _acLuminanceCoeffTable[item.Item1 * 16 + currentValueBitLength].Item1;
+                var size = _acLuminanceCoeffTable[item.Item1 * 16 + currentValueBitLength].Item2;
 
                 BufferIt(bw, code, size);
                 BufferIt(bw, currentValue, currentValueBitLength);
@@ -57,13 +58,19 @@ namespace Infrastructure.Services
         public void EncodeChrominanceDC(int dc, int prevDC, BinaryWriter bw)
         {
             var diff = dc - prevDC;
-            BufferIt(bw, _dcCrominanceDiffTable[diff].Item1, _dcCrominanceDiffTable[diff].Item2);
+            if (diff < 0)
+                diff = -diff;
+            var diffBitLength = CalculateValueCategory(diff);
+            BufferIt(bw, _dcCrominanceDiffTable[diffBitLength].Item1, _dcCrominanceDiffTable[diffBitLength].Item2);
         }
 
         public void EncodeLuminanceDC(int dc, int prevDC, BinaryWriter bw)
         {
             var diff = dc - prevDC;
-            BufferIt(bw, _dcLuminanceDiffTable[diff].Item1, _dcLuminanceDiffTable[diff].Item2);
+            if (diff < 0)
+                diff = -diff;
+            var diffBitLength = CalculateValueCategory(diff);
+            BufferIt(bw, _dcLuminanceDiffTable[diffBitLength].Item1, _dcLuminanceDiffTable[diffBitLength].Item2);
         }
 
         #region Util
@@ -82,9 +89,12 @@ namespace Infrastructure.Services
             ExtractTable(HuffmanEncodingTables.ACChrominanceBits, HuffmanEncodingTables.ACChrominanceValues, this._acCrominanceCoeffTable);
         }
 
-        private static int CalculateBitLength(int currentValue)
+        private static int CalculateValueCategory(int currentValue)
         {
-            var currentValueBitLength = 0;
+            if(currentValue == 0) 
+                return 0;
+
+            var currentValueBitLength = 1;
             var temp = currentValue;
 
             if (currentValue < 0)

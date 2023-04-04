@@ -25,7 +25,7 @@ namespace Infrastructure.Services
                     zeroCount = 0;
                 }
 
-                if (zeroCount > 15)
+                if (zeroCount > 14)
                 {
                     result.Add(new Tuple<int, int>(zeroCount, currentValue));
                     zeroCount = 0;

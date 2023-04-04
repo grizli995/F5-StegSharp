@@ -38,9 +38,9 @@ namespace Infrastructure.Services
                 var crMCU = quantizedDCTData.CRDCTData[i];
                 var cbMCU = quantizedDCTData.CBDCTData[i];
 
-                EncodeMCUComponent(prevDc_Y, yMCU, bw);
-                EncodeMCUComponent(prevDc_Cr, crMCU, bw);
-                EncodeMCUComponent(prevDc_Cb, cbMCU, bw);
+                EncodeMCUComponent(prevDc_Y, yMCU, bw, true);
+                EncodeMCUComponent(prevDc_Cr, crMCU, bw, false);
+                EncodeMCUComponent(prevDc_Cb, cbMCU, bw, false);
 
                 prevDc_Y = (int)yMCU[0];
                 prevDc_Cr = (int)crMCU[0];
@@ -48,10 +48,19 @@ namespace Infrastructure.Services
             }
         }
 
-        private void EncodeMCUComponent(int prevDC, JpegBlock8x8F mcu, BinaryWriter bw)
+        private void EncodeMCUComponent(int prevDC, JpegBlock8x8F mcu, BinaryWriter bw, bool isLuminance)
         {
-            _huffmanEncodingService.EncodeLuminanceDC((int)mcu[0], prevDC, bw);
-            _huffmanEncodingService.EncodeLuminanceAC(mcu, bw);
+            if(isLuminance)
+            {
+                _huffmanEncodingService.EncodeLuminanceDC((int)mcu[0], prevDC, bw);
+                _huffmanEncodingService.EncodeLuminanceAC(mcu, bw);
+            }
+            else
+            {
+                _huffmanEncodingService.EncodeChrominanceDC((int)mcu[0], prevDC, bw);
+                _huffmanEncodingService.EncodeChrominanceAC(mcu, bw);
+
+            }
         }
     }
 }
