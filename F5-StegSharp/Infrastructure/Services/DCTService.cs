@@ -124,7 +124,7 @@ namespace Infrastructure.Services
         /// <param name="width">Width</param>
         /// <param name="height">Height</param>
         /// <returns>Array of MCUs for a single color component.</returns>
-        private JpegBlock8x8F[] CreateMCUsForColorComponent(byte[,] input, int width, int height)
+        private JpegBlock8x8F[] CreateMCUsForColorComponent(float[,] input, int width, int height)
         {
             JpegBlock8x8F[] res = new JpegBlock8x8F[width * height / 64];
 
@@ -149,7 +149,7 @@ namespace Infrastructure.Services
         /// <param name="sWidth">starting width</param>
         /// <param name="sHeight">starting height</param>
         /// <returns>MCU object which is a 8x8 block.</returns>
-        private JpegBlock8x8F CreateMinimumCodedUnit(byte[,] input, int sWidth, int sHeight)
+        private JpegBlock8x8F CreateMinimumCodedUnit(float[,] input, int sWidth, int sHeight)
         {
             var result = new JpegBlock8x8F();
 
@@ -157,7 +157,7 @@ namespace Infrastructure.Services
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    result[i] = input[sWidth + j, sHeight + i];
+                    result[j, i] = input[sHeight + i, sWidth + j];
                 }
             }
 
@@ -193,9 +193,9 @@ namespace Infrastructure.Services
         {
             JpegBlock8x8F tmp = input[iBlock];
 
-            for (int iElement = 0; iElement < input.Length; iElement++)
+            for (int iElement = 0; iElement < 64; iElement++)
             {
-                tmp[iElement] = (float)Math.Round((tmp[iElement] / quantizationTable[iElement]));
+                tmp[iElement] = (float)Math.Round(tmp[iElement] / quantizationTable[iElement]);
             }
 
             result[iBlock] = tmp;
