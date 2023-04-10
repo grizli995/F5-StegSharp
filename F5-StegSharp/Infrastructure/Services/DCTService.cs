@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
+using Domain;
 using JpegLibrary;
 using System.Runtime.CompilerServices;
 
@@ -33,6 +34,27 @@ namespace Infrastructure.Services
 
             return result;
         }
+
+        public DCTData QuantizeDCT(DCTData input, byte[] chrominanceTable, byte[] luminanceTable)
+        {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+
+            if (chrominanceTable == null)
+                chrominanceTable = JpegStandardQuantizationTable.ChrominanceTable;
+
+            if (luminanceTable == null)
+                luminanceTable = JpegStandardQuantizationTable.LuminanceTable;
+
+            var result = new DCTData();
+
+            result.YDCTData = QuantizeDCTComponent(input.YDCTData, luminanceTable);
+            result.CRDCTData = QuantizeDCTComponent(input.CRDCTData, chrominanceTable);
+            result.CBDCTData = QuantizeDCTComponent(input.CBDCTData, chrominanceTable);
+
+            return result;
+        }
+
 
         #region Util
 
@@ -102,7 +124,7 @@ namespace Infrastructure.Services
         /// <param name="width">Width</param>
         /// <param name="height">Height</param>
         /// <returns>Array of MCUs for a single color component.</returns>
-        private JpegBlock8x8F[] CreateMCUsForColorComponent(byte[,] input, int width, int height)
+        private JpegBlock8x8F[] CreateMCUsForColorComponent(float[,] input, int width, int height)
         {
             JpegBlock8x8F[] res = new JpegBlock8x8F[width * height / 64];
 
@@ -127,7 +149,7 @@ namespace Infrastructure.Services
         /// <param name="sWidth">starting width</param>
         /// <param name="sHeight">starting height</param>
         /// <returns>MCU object which is a 8x8 block.</returns>
-        private JpegBlock8x8F CreateMinimumCodedUnit(byte[,] input, int sWidth, int sHeight)
+        private JpegBlock8x8F CreateMinimumCodedUnit(float[,] input, int sWidth, int sHeight)
         {
             var result = new JpegBlock8x8F();
 
@@ -135,11 +157,48 @@ namespace Infrastructure.Services
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    result[i] = input[sWidth + j, sHeight + i];
+                    result[j, i] = input[sHeight + i, sWidth + j];
                 }
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Quantize DCT data for 1 component. Divide dct element by the quantization element with the same index.
+        /// </summary>
+        /// <param name="input">DCT data for 1 color component.</param>
+        /// <param name="quantizationTable">Quantization table.</param>
+        /// <returns>Returns new DCTData object with quantized data.</returns>
+        private JpegBlock8x8F[] QuantizeDCTComponent(JpegBlock8x8F[] input, byte[] quantizationTable)
+        {
+            var result = new JpegBlock8x8F[input.Length];
+
+            for (int iBlock = 0; iBlock < input.Length; iBlock++)
+            {
+                QuantizeDCTBlock(input, quantizationTable, result, iBlock);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Quantize DCT block.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="quantizationTable"></param>
+        /// <param name="result"></param>
+        /// <param name="iBlock">Block index.</param>
+        private static void QuantizeDCTBlock(JpegBlock8x8F[] input, byte[] quantizationTable, JpegBlock8x8F[] result, int iBlock)
+        {
+            JpegBlock8x8F tmp = input[iBlock];
+
+            for (int iElement = 0; iElement < 64; iElement++)
+            {
+                tmp[iElement] = (float)Math.Round(tmp[iElement] / quantizationTable[iElement]);
+            }
+
+            result[iBlock] = tmp;
         }
 
         #endregion

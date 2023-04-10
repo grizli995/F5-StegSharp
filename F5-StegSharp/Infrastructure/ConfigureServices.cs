@@ -12,6 +12,10 @@ namespace Infrastructure
             services.AddScoped<IF5Service, F5Service>();
             services.AddScoped<IDCTService, DCTService>();
             services.AddScoped<IPaddingService, PaddingService>();
+            services.AddScoped<IRunLengthEncodingService, RunLengthEncodingService>();
+            services.AddScoped<IHuffmanEncodingService, HuffmanEncodingService>();
+            services.AddScoped<IEncodingOrchestratorService, EncodingOrchestratorService>();
+            services.AddScoped<IHeaderService, HeaderService>();
 
             return services;
         }
