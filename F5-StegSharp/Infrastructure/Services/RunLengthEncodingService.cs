@@ -25,14 +25,14 @@ namespace Infrastructure.Services
                     zeroCount = 0;
                 }
 
-                if (zeroCount > 14)
+                while (zeroCount > 15)
                 {
-                    result.Add(new Tuple<int, int>(zeroCount, currentValue));
-                    zeroCount = 0;
+                    result.Add(new Tuple<int, int>(15, 0));
+                    zeroCount -= 16;
                 }
             }
 
-            AddEndOfBlockMarker(result);
+            result.Add(new Tuple<int, int>(0, 0));
 
             return result;
         }
@@ -43,7 +43,7 @@ namespace Infrastructure.Services
         {
             var i = result.Count - 1;
 
-            while (result[i].Item2 == 0)
+            while (i >= 0 && result[i].Item2 == 0)
             {
                 result.RemoveAt(i);
                 i--;
