@@ -8,15 +8,15 @@ namespace Application.Models
 {
     public class YCBCRData
     {
-        public byte[,] YData { get; set; }
-        public byte[,] CRData { get; set; }
-        public byte[,] CBData { get; set; }
+        public float[,] YData { get; set; }
+        public float[,] CRData { get; set; }
+        public float[,] CBData { get; set; }
 
         public YCBCRData(int width, int height)
         {
-            YData = new byte[height, width];
-            CRData = new byte[height, width];
-            CBData = new byte[height, width];
+            YData = new float[height, width];
+            CRData = new float[height, width];
+            CBData = new float[height, width];
         }
     }
 }

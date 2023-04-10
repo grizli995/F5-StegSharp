@@ -57,7 +57,7 @@ namespace Infrastructure.Services
         /// <param name="paddedWidth">Padded width</param>
         /// <param name="paddedHeight">Padded height</param>
         /// <param name="paddedInput">Padded byte array</param>
-        private static void PopulatePaddedInput(byte[,] input, int width, int height, int paddedWidth, int paddedHeight, byte[,] paddedInput)
+        private static void PopulatePaddedInput(float[,] input, int width, int height, int paddedWidth, int paddedHeight, float[,] paddedInput)
         {
             for (int i = 0; i < paddedHeight; i++)
             {
@@ -89,13 +89,13 @@ namespace Infrastructure.Services
         /// <param name="width">Original width</param>
         /// <param name="height">Original height</param>
         /// <returns>New padded and populated byte array.</returns>
-        private byte[,] ApplyEdgeExtensionPadding(byte[,] input, int width, int height)
+        private float[,] ApplyEdgeExtensionPadding(float[,] input, int width, int height)
         {
             int paddedWidth = CalculatePaddedDimension(width);
 
             int paddedHeight = CalculatePaddedDimension(height);
 
-            var paddedInput = new byte[paddedWidth, paddedHeight];
+            var paddedInput = new float[paddedHeight, paddedWidth];
 
             PopulatePaddedInput(input, width, height, paddedWidth, paddedHeight, paddedInput);
 
