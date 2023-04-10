@@ -73,7 +73,10 @@ namespace Infrastructure.Services
 
         private void WriteDQTData(BinaryWriter bw, byte[] table)
         {
-            bw.Write(table);
+            for(var i = 0; i< table.Length; i++)
+            {
+                bw.Write(table[JpegSorting.JpegNaturalOrder[i]]);
+            }
         }
 
         /// <summary>
@@ -98,7 +101,7 @@ namespace Infrastructure.Services
             for (var i = 0; i < 3/*JpegInfo.NumberOfComponents*/; i++)
             {
                 SOF.Add((byte)(i + 1));
-                SOF.Add(0x22);      //samp factor 1x1
+                SOF.Add(0x11);      //samp factor 1x1
 
                 if (i == 0)
                 {
