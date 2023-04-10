@@ -14,7 +14,7 @@ namespace Infrastructure.Services
 
         private readonly IRunLengthEncodingService _runLengthEncodingService;
 
-        public HuffmanEncodingService(IRunLengthEncodingService runLengthEncodingService) 
+        public HuffmanEncodingService(IRunLengthEncodingService runLengthEncodingService)
         {
             InitHuffmanTables();
             this._runLengthEncodingService = runLengthEncodingService;
@@ -22,55 +22,22 @@ namespace Infrastructure.Services
 
         public void EncodeChrominanceAC(JpegBlock8x8F block, BinaryWriter bw)
         {
-            var runLengthValuePairs = _runLengthEncodingService.Encode(block);
-
-            foreach (var item in runLengthValuePairs)
-            {
-                var currentValue = item.Item2;
-                int currentValueBitLength = CalculateValueCategory(currentValue);
-
-                var code = _acCrominanceCoeffTable[item.Item1 * 16 + currentValueBitLength].Item1;
-                var size = _acCrominanceCoeffTable[item.Item1 * 16 + currentValueBitLength].Item2;
-
-                BufferIt(bw, code, size);
-                BufferIt(bw, currentValue, currentValueBitLength);
-            }
+            EncodeAC(block, bw, _acCrominanceCoeffTable);
         }
 
         public void EncodeLuminanceAC(JpegBlock8x8F block, BinaryWriter bw)
         {
-            var runLengthValuePairs = _runLengthEncodingService.Encode(block);
-
-            foreach (var item in runLengthValuePairs)
-            {
-                var currentValue = item.Item2;
-                int currentValueBitLength = CalculateValueCategory(currentValue);
-                //treba kad je currentValue = 0  da currentValuebitLenght  da bude = 0;
-                //fali mu +1 kad indeksiram.
-                var code = _acLuminanceCoeffTable[item.Item1 * 16 + currentValueBitLength].Item1;
-                var size = _acLuminanceCoeffTable[item.Item1 * 16 + currentValueBitLength].Item2;
-
-                BufferIt(bw, code, size);
-                BufferIt(bw, currentValue, currentValueBitLength);
-            }
+            EncodeAC(block, bw, _acLuminanceCoeffTable);
         }
 
         public void EncodeChrominanceDC(int dc, int prevDC, BinaryWriter bw)
         {
-            var diff = dc - prevDC;
-            if (diff < 0)
-                diff = -diff;
-            var diffBitLength = CalculateValueCategory(diff);
-            BufferIt(bw, _dcCrominanceDiffTable[diffBitLength].Item1, _dcCrominanceDiffTable[diffBitLength].Item2);
+            EncodeDC(dc, prevDC, bw, _dcCrominanceDiffTable);
         }
 
         public void EncodeLuminanceDC(int dc, int prevDC, BinaryWriter bw)
         {
-            var diff = dc - prevDC;
-            if (diff < 0)
-                diff = -diff;
-            var diffBitLength = CalculateValueCategory(diff);
-            BufferIt(bw, _dcLuminanceDiffTable[diffBitLength].Item1, _dcLuminanceDiffTable[diffBitLength].Item2);
+            EncodeDC(dc, prevDC, bw, _dcLuminanceDiffTable);
         }
 
         #region Util
@@ -91,7 +58,7 @@ namespace Infrastructure.Services
 
         private static int CalculateValueCategory(int currentValue)
         {
-            if(currentValue == 0) 
+            if (currentValue == 0)
                 return 0;
 
             var currentValueBitLength = 1;
@@ -125,11 +92,10 @@ namespace Infrastructure.Services
             }
         }
 
-        private void BufferIt(BinaryWriter bw, int code, int size)
+        private void WriteBits(BinaryWriter bw, int code, int size)
         {
             int putBuffer = code;
             int putBits = this._bufferPutBits;
-
             putBuffer &= (1 << size) - 1;
             putBits += size;
             putBuffer <<= 24 - putBits;
@@ -151,6 +117,108 @@ namespace Infrastructure.Services
         private void WriteByte(BinaryWriter bw, int b)
         {
             bw.Write((byte)b);
+        }
+
+        public void FlushBuffer(BinaryWriter bw)
+        {
+            int PutBuffer = this._bufferPutBuffer;
+            int PutBits = this._bufferPutBits;
+            while (PutBits >= 8)
+            {
+                int c = PutBuffer >> 16 & 0xFF;
+                WriteByte(bw, c);
+                if (c == 0xFF)
+                    WriteByte(bw, 0);
+                PutBuffer <<= 8;
+                PutBits -= 8;
+            }
+            if (PutBits > 0)
+            {
+                int c = PutBuffer >> 16 & 0xFF;
+                WriteByte(bw, c);
+            }
+        }
+
+        private void EncodeACCoeff(BinaryWriter bw, Tuple<int, int> item, Tuple<int, int>[] coeffTable)
+        {
+            //Prepare currentValue to appropriate bit representation.
+            var currentAbsoluteValue = item.Item2;
+            var currentValue = currentAbsoluteValue;
+            if (currentAbsoluteValue < 00)
+            {
+                currentAbsoluteValue = -currentAbsoluteValue;
+                currentValue--;
+            }
+
+            int currentValueBitLength = CalculateValueCategory(currentAbsoluteValue);
+
+            WriteACCoeffCategory(bw, item, coeffTable, currentValueBitLength);
+
+            WriteACCoeffValue(bw, item, currentValue, currentValueBitLength);
+        }
+
+        private void WriteACCoeffValue(BinaryWriter bw, Tuple<int, int> item, int currentValue, int currentValueBitLength)
+        {
+            if ((item.Item1 != 0 && item.Item2 != 0) || (item.Item1 != 15 && item.Item2 != 0))
+            {
+                WriteBits(bw, currentValue, currentValueBitLength);
+            }
+        }
+
+        private void WriteACCoeffCategory(BinaryWriter bw, Tuple<int, int> item, Tuple<int, int>[] coeffTable, int currentValueBitLength)
+        {
+            var acCoefCategoryCode = coeffTable[item.Item1 * 16 + currentValueBitLength].Item1;
+            var acCoefCategorySize = coeffTable[item.Item1 * 16 + currentValueBitLength].Item2;
+
+            WriteBits(bw, acCoefCategoryCode, acCoefCategorySize);
+        }
+
+        private void EncodeDC(int dc, int prevDC, BinaryWriter bw, Tuple<int, int>[] diffTable)
+        {
+            //Prepare diffValue to appropriate bit representation.
+            var diffAbsoluteValue = dc - prevDC;
+            var diffValue = diffAbsoluteValue;
+            if (diffAbsoluteValue < 0)
+            {
+                diffAbsoluteValue = -diffAbsoluteValue;
+                diffValue--;
+            }
+
+            var diffBitLength = CalculateValueCategory(diffAbsoluteValue);
+
+            WriteDCDiffCoeffCategory(bw, diffBitLength, diffTable);
+
+            WriteDCDiffCoeffValue(bw, diffValue, diffBitLength);
+        }
+
+        private void WriteDCDiffCoeffValue(BinaryWriter bw, int diffValue, int diffBitLength)
+        {
+            if (diffBitLength != 0)
+            {
+                WriteBits(bw, diffValue, diffBitLength);
+            }
+        }
+
+        private void WriteDCDiffCoeffCategory(BinaryWriter bw, int diffBitLength, Tuple<int, int>[] diffTable)
+        {
+            WriteBits(bw, diffTable[diffBitLength].Item1, diffTable[diffBitLength].Item2);
+        }
+
+        private void EncodeAC(JpegBlock8x8F block, BinaryWriter bw, Tuple<int, int>[] coeffTable)
+        {
+            var runLengthValuePairs = _runLengthEncodingService.Encode(block);
+            var coeffCount = 1;
+
+            foreach (var item in runLengthValuePairs)
+            {
+                if (coeffCount == 64)
+                    return;
+
+                EncodeACCoeff(bw, item, coeffTable);
+
+                //Increment coefficient count. If it reaches 64, no need for EndOfBlock marker.
+                coeffCount = coeffCount + 1 + item.Item1;
+            }
         }
 
         #endregion
