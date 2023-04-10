@@ -1,24 +1,15 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
 using JpegLibrary;
-using System;
-using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
     public class EncodingOrchestratorService : IEncodingOrchestratorService
     {
-        private readonly IRunLengthEncodingService _rleService;
         private readonly IHuffmanEncodingService _huffmanEncodingService;
 
-        public EncodingOrchestratorService(IRunLengthEncodingService rleService,
-            IHuffmanEncodingService hhuffmanEncodingService)
+        public EncodingOrchestratorService(IHuffmanEncodingService hhuffmanEncodingService)
         {
-            this._rleService = rleService;
             this._huffmanEncodingService = hhuffmanEncodingService;
         }
 
@@ -28,9 +19,6 @@ namespace Infrastructure.Services
             var prevDc_Y = 0;
             var prevDc_Cr = 0;
             var prevDc_Cb = 0;
-            //var prevDc_Y = (int)quantizedDCTData.YDCTData[0][0];
-            //var prevDc_Cr = (int)quantizedDCTData.CBDCTData[0][0];
-            //var prevDc_Cb = (int)quantizedDCTData.CRDCTData[0][0];
 
             for (int i = 0; i < mcuCount; i++)
             {
@@ -39,13 +27,15 @@ namespace Infrastructure.Services
                 var cbMCU = quantizedDCTData.CBDCTData[i];
 
                 EncodeMCUComponent(prevDc_Y, yMCU, bw, true);
-                EncodeMCUComponent(prevDc_Cr, crMCU, bw, false);
                 EncodeMCUComponent(prevDc_Cb, cbMCU, bw, false);
+                EncodeMCUComponent(prevDc_Cr, crMCU, bw, false);
 
                 prevDc_Y = (int)yMCU[0];
                 prevDc_Cr = (int)crMCU[0];
                 prevDc_Cb = (int)cbMCU[0];
             }
+
+            _huffmanEncodingService.FlushBuffer(bw);
         }
 
         private void EncodeMCUComponent(int prevDC, JpegBlock8x8F mcu, BinaryWriter bw, bool isLuminance)
