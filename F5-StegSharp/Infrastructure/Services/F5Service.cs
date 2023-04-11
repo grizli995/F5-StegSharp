@@ -48,6 +48,8 @@ namespace Infrastructure.Services
             _encodingOrchestratorService.EncodeData(jpeg.QuantizedDCTData, bw);
 
             _headerService.WriteEOI(bw);
+
+            bw.Close();
         }
 
 

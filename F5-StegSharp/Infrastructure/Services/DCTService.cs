@@ -2,6 +2,7 @@
 using Application.Models;
 using Domain;
 using JpegLibrary;
+using MethodTimer;
 using System.Runtime.CompilerServices;
 
 namespace Infrastructure.Services
@@ -14,6 +15,7 @@ namespace Infrastructure.Services
             this._paddingService = paddingService;
         }
 
+        [Time]
         public DCTData CalculateDCT(YCBCRData input, int width, int height)
         {
             if (input == null)
