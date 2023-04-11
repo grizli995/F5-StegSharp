@@ -66,13 +66,5 @@ namespace Infrastructure.Services
             jpeg.Bitmap = (Bitmap)image;
             return jpeg;
         }
-        //Color[,] originalRGB = new Color[bmp.Width, bmp.Height];
-        //for (int i = 0; i < bmp.Height; i++)
-        //{
-        //    for (int j = 0; j < bmp.Width; j++)
-        //    {
-        //        originalRGB[j, i] = bmp.GetPixel(j, i);
-        //    }
-        //}
     }
 }
