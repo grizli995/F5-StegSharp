@@ -19,5 +19,12 @@ namespace Application.Models
             this.CRDCTData = new JpegBlock8x8F[] { };
             this.CBDCTData = new JpegBlock8x8F[] { };
         }
+
+        public DCTData(int dctCount)
+        {
+            this.YDCTData = new JpegBlock8x8F[dctCount];
+            this.CRDCTData = new JpegBlock8x8F[dctCount];
+            this.CBDCTData = new JpegBlock8x8F[dctCount];
+        }
     }
 }
