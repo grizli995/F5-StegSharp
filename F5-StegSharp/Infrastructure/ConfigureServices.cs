@@ -16,6 +16,8 @@ namespace Infrastructure
             services.AddScoped<IHuffmanEncodingService, HuffmanEncodingService>();
             services.AddScoped<IEncodingOrchestratorService, EncodingOrchestratorService>();
             services.AddScoped<IHeaderService, HeaderService>();
+            services.AddScoped<IHuffmanDecodingService, HuffmanDecodingService>();
+            services.AddScoped<IBitReaderService, BitReaderService>();
 
             return services;
         }
