@@ -19,6 +19,65 @@ namespace Infrastructure.Services
         }
 
         /// <summary>
+        /// Writes "End Of Image" markers and data.
+        /// </summary>
+        /// <param name="bw"></param>
+        public void WriteEOI(BinaryWriter bw)
+        {
+            bw.Write((byte)JpegMarker.Padding);
+            bw.Write((byte)JpegMarker.EndOfImage);
+        }
+
+        /// <summary>
+        /// Reads Jpeg headers until the start of the Entropy Coded Segment.
+        /// </summary>
+        /// <param name="br">BinaryReader</param>
+        /// <returns>JpegInfo object, containg information like dimensions, components, quantization and huffman tables from the jpeg.</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public JpegInfo ReadHeaders(BinaryReader br)
+        {
+            //TODO Implement
+            //Currently reading all data but not processing any of it.
+            var jpeg = new JpegInfo();
+
+            var prev = br.ReadByte();
+            var current = br.ReadByte();
+            while (!(prev == (byte)JpegMarker.Padding && current == 0xDA))
+            {
+                prev = current; 
+                current = br.ReadByte();
+                if(prev == (byte)JpegMarker.Padding && current == (byte)JpegMarker.StartOfFrame0)
+                {
+                    for(int i = 0; i < 4; i++)
+                    {
+                        prev = current;
+                        current = br.ReadByte();
+                    }
+
+                    prev = current;
+                    current = br.ReadByte();
+                    jpeg.Height = current;
+
+                    prev = current;
+                    current = br.ReadByte();
+
+                    prev = current;
+                    current = br.ReadByte();
+                    jpeg.Width = current;
+                }
+            }
+            for(var i = 0; i < 12; i++)
+            {
+                prev = current;
+                current = br.ReadByte();
+            }
+
+            return jpeg;
+        }
+
+        #region Util
+
+        /// <summary>
         /// Writes "Start Of Image" markers and data.
         /// </summary>
         /// <param name="bw"></param>
@@ -171,14 +230,6 @@ namespace Infrastructure.Services
 
         }
 
-        /// <summary>
-        /// Writes "End Of Image" markers and data.
-        /// </summary>
-        /// <param name="bw"></param>
-        public void WriteEOI(BinaryWriter bw)
-        {
-            bw.Write((byte)JpegMarker.Padding);
-            bw.Write((byte)JpegMarker.EndOfImage);
-        }
+        #endregion
     }
 }
