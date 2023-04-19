@@ -52,11 +52,14 @@ namespace Infrastructure.Services
             bw.Close();
         }
 
-
-        public void Extract()
+        public string Extract(string password, BinaryReader br)
         {
-            throw new NotImplementedException();
+            var x = _headerService.ReadHeaders(br);
+            _encodingOrchestratorService.DecodeData(x, br);
+            return string.Empty;
         }
+
+        #region Util
 
         private static JpegInfo CreateJpegInfo(Image image)
         {
@@ -66,5 +69,9 @@ namespace Infrastructure.Services
             jpeg.Bitmap = (Bitmap)image;
             return jpeg;
         }
+
+        #endregion
+
+
     }
 }
