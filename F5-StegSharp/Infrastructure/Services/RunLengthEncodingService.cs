@@ -37,6 +37,36 @@ namespace Infrastructure.Services
             return result;
         }
 
+        public JpegBlock8x8F Decode(List<Tuple<int, int>> pairs)
+        {
+            var result = new JpegBlock8x8F();
+            var i = 1;
+
+            foreach (var pair in pairs)
+            {
+                if (pair.Item1 == 0 && pair.Item2 == 0)
+                {
+                    for (i = i; i < 64; i++)
+                    {
+                        result[JpegSorting.JpegNaturalOrder[i]] = 0;
+                    }
+                }
+                else
+                {
+                    for (int c = 0; c < pair.Item1; c++)
+                    {
+                        result[JpegSorting.JpegNaturalOrder[i]] = 0;
+                        i++;
+                    }
+
+                    result[JpegSorting.JpegNaturalOrder[i]] = pair.Item2;
+                    i++;
+                }
+            }
+
+            return result;
+        }
+
         #region Util
 
         private static void AddEndOfBlockMarker(List<Tuple<int, int>> result)
