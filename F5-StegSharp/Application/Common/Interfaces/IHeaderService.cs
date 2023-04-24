@@ -9,5 +9,7 @@ namespace Application.Common.Interfaces
         void WriteEOI(BinaryWriter bw);
 
         JpegInfo ReadHeaders(BinaryReader br);
+
+        void ParseJpegMarkers(BinaryReader br, JpegInfo jpeg);
     }
 }
