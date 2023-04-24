@@ -27,7 +27,7 @@ namespace Infrastructure.Services
             this._headerService = headerService;
         }
 
-        public void Embed(Image image, string password, string text, BinaryWriter bw)
+        public DCTData Embed(Image image, string password, string text, BinaryWriter bw)
         {
             //Create jpegInfo object
             JpegInfo jpeg = CreateJpegInfo(image);
@@ -50,13 +50,25 @@ namespace Infrastructure.Services
             _headerService.WriteEOI(bw);
 
             bw.Close();
+
+
+            //TODO remove this.
+            return jpeg.QuantizedDCTData;
         }
 
         public string Extract(string password, BinaryReader br)
         {
-            var x = _headerService.ReadHeaders(br);
-            _encodingOrchestratorService.DecodeData(x, br);
+            var jpeg = new JpegInfo();
+            _headerService.ParseJpegMarkers(br, jpeg);
+            var result = _encodingOrchestratorService.DecodeData(jpeg, br);
             return string.Empty;
+        }
+
+        public DCTData ExtractDCT(string password, BinaryReader br)
+        {
+            _headerService.ParseJpegMarkers(br, jpeg);
+            var result = _encodingOrchestratorService.DecodeData(jpeg, br);
+            return result;
         }
 
         #region Util
@@ -71,7 +83,5 @@ namespace Infrastructure.Services
         }
 
         #endregion
-
-
     }
 }
