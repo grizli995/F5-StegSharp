@@ -18,6 +18,7 @@ namespace Infrastructure
             services.AddScoped<IHeaderService, HeaderService>();
             services.AddScoped<IHuffmanDecodingService, HuffmanDecodingService>();
             services.AddScoped<IBitReaderService, BitReaderService>();
+            services.AddScoped<IMCUConverterService, MCUConverterService>();
 
             return services;
         }
