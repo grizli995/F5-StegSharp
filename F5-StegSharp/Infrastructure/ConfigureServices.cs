@@ -20,6 +20,7 @@ namespace Infrastructure
             services.AddScoped<IBitReaderService, BitReaderService>();
             services.AddScoped<IMCUConverterService, MCUConverterService>();
             services.AddScoped<IF5EmbeddingService, F5EmbeddingService>();
+            services.AddScoped<IPermutationService, PermutationService>();
 
             return services;
         }
