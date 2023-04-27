@@ -19,6 +19,7 @@ namespace Infrastructure
             services.AddScoped<IHuffmanDecodingService, HuffmanDecodingService>();
             services.AddScoped<IBitReaderService, BitReaderService>();
             services.AddScoped<IMCUConverterService, MCUConverterService>();
+            services.AddScoped<IF5EmbeddingService, F5EmbeddingService>();
 
             return services;
         }

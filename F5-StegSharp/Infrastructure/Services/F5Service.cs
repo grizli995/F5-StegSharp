@@ -15,16 +15,19 @@ namespace Infrastructure.Services
         private readonly IDCTService _dctService;
         private readonly IEncodingOrchestratorService _encodingOrchestratorService;
         private readonly IHeaderService _headerService;
+        private readonly IF5EmbeddingService _embeddingService;
 
         public F5Service(IColorTransformationService colorTransformationService, 
             IDCTService dCTService, 
             IEncodingOrchestratorService encodingOrchestratorService,
-            IHeaderService headerService) 
+            IHeaderService headerService,
+            IF5EmbeddingService embeddingService) 
         {
             this._colorTransformationService = colorTransformationService;
             this._dctService = dCTService;
             this._encodingOrchestratorService = encodingOrchestratorService;
             this._headerService = headerService;
+            this._embeddingService = embeddingService;
         }
 
         public DCTData Embed(Image image, string password, string text, BinaryWriter bw)
@@ -43,6 +46,9 @@ namespace Infrastructure.Services
 
             //step 3 in jpeg compression - Quantize DCT values.
             jpeg.QuantizedDCTData = _dctService.QuantizeDCT(jpeg.DCTData, null, null);
+
+            //step 3.5 - embedding the message
+            var x = _embeddingService.Embed(jpeg.QuantizedDCTData, password, text);
 
             //step 4 in jpeg compression - Run length encoding and huffman encoding.
             _encodingOrchestratorService.EncodeData(jpeg.QuantizedDCTData, bw);
@@ -66,6 +72,7 @@ namespace Infrastructure.Services
 
         public DCTData ExtractDCT(string password, BinaryReader br)
         {
+            var jpeg = new JpegInfo();
             _headerService.ParseJpegMarkers(br, jpeg);
             var result = _encodingOrchestratorService.DecodeData(jpeg, br);
             return result;
