@@ -21,6 +21,7 @@ namespace Infrastructure
             services.AddScoped<IMCUConverterService, MCUConverterService>();
             services.AddScoped<IF5EmbeddingService, F5EmbeddingService>();
             services.AddScoped<IPermutationService, PermutationService>();
+            services.AddScoped<IF5ParameterCalculatorService, F5ParameterCalculatorService>();
 
             return services;
         }
