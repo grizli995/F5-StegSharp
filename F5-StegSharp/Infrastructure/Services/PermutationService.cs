@@ -1,5 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using JpegLibrary;
+using System.Numerics;
+using System.Text;
 
 namespace Infrastructure.Services
 {
@@ -23,7 +25,7 @@ namespace Infrastructure.Services
             //permutate
             if (reverse)
             {
-                for (int i = mcuCount; i >= 0; i++)
+                for (int i = mcuCount - 1; i >= 0; i--)
                 {
                     SwapElements(permutedArray, permutationSequence, i);
                 }
@@ -39,6 +41,8 @@ namespace Infrastructure.Services
             return permutedArray;
         }
 
+        #region Util 
+
         private void SwapElements(JpegBlock8x8F[] permutedArray, Dictionary<int, int> permutationSequence, int i)
         {
             int randomIndex = permutationSequence[i];
@@ -51,14 +55,31 @@ namespace Infrastructure.Services
         private Dictionary<int, int> GetPermutationSequence(string password, int mcuCount)
         {
             var permutationSequence = new Dictionary<int, int>();
-            var rng = new Random(password.GetHashCode());
+            var rngIndexArray = GenerateDeterministicNumberSequence(password, mcuCount);
             for (int i = 0; i < mcuCount; i++)
             {
-                var randomIndex = rng.Next(0, mcuCount);
+                var randomIndex = rngIndexArray[i] % (mcuCount - 1);
                 permutationSequence.Add(i, randomIndex);
             }
 
             return permutationSequence;
         }
+
+        private static int[] GenerateDeterministicNumberSequence(string seed, int length)
+        {
+            BigInteger bigSeed = new BigInteger(Encoding.UTF8.GetBytes(seed));
+            int[] sequence = new int[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                bigSeed = BigInteger.Multiply(bigSeed, 397); // We can use any prime number for multiplication
+                bigSeed = BigInteger.ModPow(bigSeed, 1, int.MaxValue);
+                sequence[i] = (int)bigSeed;
+            }
+
+            return sequence;
+        }
+
+        #endregion
     }
 }
