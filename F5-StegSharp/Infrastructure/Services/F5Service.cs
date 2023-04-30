@@ -48,10 +48,10 @@ namespace Infrastructure.Services
             jpeg.QuantizedDCTData = _dctService.QuantizeDCT(jpeg.DCTData, null, null);
 
             //step 3.5 - embedding the message
-            var x = _embeddingService.Embed(jpeg.QuantizedDCTData, password, text);
+            jpeg.EmbededData = _embeddingService.Embed(jpeg.QuantizedDCTData, password, text);
 
             //step 4 in jpeg compression - Run length encoding and huffman encoding.
-            _encodingOrchestratorService.EncodeData(jpeg.QuantizedDCTData, bw);
+            _encodingOrchestratorService.EncodeData(jpeg.EmbededData, bw);
 
             _headerService.WriteEOI(bw);
 
