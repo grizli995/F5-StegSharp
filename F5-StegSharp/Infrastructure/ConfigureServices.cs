@@ -22,6 +22,7 @@ namespace Infrastructure
             services.AddScoped<IF5EmbeddingService, F5EmbeddingService>();
             services.AddScoped<IPermutationService, PermutationService>();
             services.AddScoped<IF5ParameterCalculatorService, F5ParameterCalculatorService>();
+            services.AddScoped<IF5ExtractingService, F5ExtractingService>();
 
             return services;
         }

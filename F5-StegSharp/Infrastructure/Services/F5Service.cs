@@ -16,18 +16,21 @@ namespace Infrastructure.Services
         private readonly IEncodingOrchestratorService _encodingOrchestratorService;
         private readonly IHeaderService _headerService;
         private readonly IF5EmbeddingService _embeddingService;
+        private readonly IF5ExtractingService _extractingService;
 
         public F5Service(IColorTransformationService colorTransformationService, 
             IDCTService dCTService, 
             IEncodingOrchestratorService encodingOrchestratorService,
             IHeaderService headerService,
-            IF5EmbeddingService embeddingService) 
+            IF5EmbeddingService embeddingService,
+            IF5ExtractingService extractingService) 
         {
             this._colorTransformationService = colorTransformationService;
             this._dctService = dCTService;
             this._encodingOrchestratorService = encodingOrchestratorService;
             this._headerService = headerService;
             this._embeddingService = embeddingService;
+            this._extractingService = extractingService;
         }
 
         public DCTData Embed(Image image, string password, string text, BinaryWriter bw)
@@ -66,7 +69,8 @@ namespace Infrastructure.Services
         {
             var jpeg = new JpegInfo();
             _headerService.ParseJpegMarkers(br, jpeg);
-            var result = _encodingOrchestratorService.DecodeData(jpeg, br);
+            var quantizedDctData = _encodingOrchestratorService.DecodeData(jpeg, br);
+            var message = _extractingService.Extract(quantizedDctData, password);
             return string.Empty;
         }
 
@@ -75,6 +79,7 @@ namespace Infrastructure.Services
             var jpeg = new JpegInfo();
             _headerService.ParseJpegMarkers(br, jpeg);
             var result = _encodingOrchestratorService.DecodeData(jpeg, br);
+            var message = _extractingService.Extract(result, password);
             return result;
         }
 
