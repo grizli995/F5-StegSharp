@@ -118,7 +118,9 @@ namespace Infrastructure.Services
 
         private void ExtractMessageBits(int k, byte[] messageBytes, ref int messageByteIndex, ref int messageBitIndex, int hash)
         {
-            for (int i = k - 1; i >= 0; i--)
+            int start = GetHashStartIndex(k, messageBytes, messageByteIndex, messageBitIndex);
+
+            for (int i = start; i >= 0; i--)
             {
                 var bitToExtract = (hash >> i) & 1;
 
@@ -134,6 +136,19 @@ namespace Infrastructure.Services
                 messageBytes[messageByteIndex] = (byte)(messageBytes[messageByteIndex] | (byte)bitToExtract);
                 messageBitIndex++;
             }
+        }
+
+        private int GetHashStartIndex(int k, byte[] messageBytes, int messageByteIndex, int messageBitIndex)
+        {
+            bool isLastByte = ((messageBitIndex + k) > 7) && (messageByteIndex == (messageBytes.Count() - 1));
+            var limit = k - 1;
+
+            if (isLastByte)
+            {
+                limit = 8 - (messageBitIndex + 1);
+            }
+
+            return limit;
         }
 
         private int CalculateHash(int n, int[] coeffsToRead)

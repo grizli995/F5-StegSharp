@@ -169,10 +169,12 @@ namespace Infrastructure.Services
                         messageByteIndex++;
                     }
 
-                    var nextBitToEmbed = byteToEmbed & 1;
-                    byteToEmbed = byteToEmbed >> 1;
+                    var nextBitToEmbed = (byteToEmbed  >> (availableBitsForEmbedding - 1)) & 1;
+                    //byteToEmbed = byteToEmbed >> 1;
                     availableBitsForEmbedding--;
-                    bitsToEmbed |= nextBitToEmbed << i;
+                    //bitsToEmbed |= nextBitToEmbed << i;
+                    bitsToEmbed = bitsToEmbed << 1;
+                    bitsToEmbed |= nextBitToEmbed;
                 }
             }
 
