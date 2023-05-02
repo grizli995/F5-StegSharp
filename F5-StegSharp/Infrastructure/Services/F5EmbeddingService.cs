@@ -2,8 +2,6 @@
 using Application.Models;
 using Infrastructure.Util.Extensions;
 using System.Collections;
-using System.Data.SqlTypes;
-using System.Diagnostics.Metrics;
 
 namespace Infrastructure.Services
 {
@@ -41,17 +39,19 @@ namespace Infrastructure.Services
             var k = _f5ParameterCalculatorService.CalculateK(permutatedMcuArray, message);
             var n = _f5ParameterCalculatorService.CalculateN(k);
 
+            //step 4 - Convert permutated MCU array into coefficient array.
             var coeffs = _mcuConverterService.MCUArrayToCoeffArray(permutatedMcuArray);
 
-            //step 4 - save k and msgLen in first 4 bytes. (k = 1b, msgLen = 3b)
+            //step 5 - save k and msgLen in first 4 bytes. (k = 1b, msgLen = 3b)
             var lastModifiedIndex = EmbedDecodingInfo(coeffs, k, message);
 
-            //step 5 - Embed data
+            //step 6 - Embed data
             var embededCoeffData = EmbedMessage(coeffs, message, k, n, lastModifiedIndex);
 
+            //step 7 - convert back coefficient array to MCU array
             var permutatedEmbededMcuData = _mcuConverterService.CoeffArrayMCUArray(embededCoeffData);
 
-            //step 6 - Reverse permutation to get the original order of MCUs.
+            //step 8 - Reverse permutation to get the original order of MCUs.
             var embededMCUData = _permutationService.PermutateArray(password, permutatedEmbededMcuData, true);
 
             var result = _mcuConverterService.MCUArrayToDCTData(embededMCUData);
@@ -59,138 +59,169 @@ namespace Infrastructure.Services
             return result;
         }
 
+        #region Util
+
         private float[] EmbedMessage(float[] coeffs, string message, int k, int n, int lastModifiedIndex)
         {
             byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
             var messageBitLength = message.GetBitLength();
             var index = lastModifiedIndex + 1;
             var counter = 0;
-
-            Dictionary<int, Tuple<int,int>> coeffsToEmbed = new Dictionary<int, Tuple<int, int>>();
+            Dictionary<int, Tuple<int, int>> coeffsToEmbed = new Dictionary<int, Tuple<int, int>>();
             var byteToEmbed = 0;
             var bitsToEmbed = 0;
             var availableBitsForEmbedding = 0;
             var messageByteIndex = 0;
-
             var coeffCount = 0;
-            var hash = 0;
-            var currentCoeff = 0;
-            var shrinkedCoeffId = -1;
+            var shrinkageOccured = false;
 
             while (counter < messageBitLength)
             {
                 //get coefficients to embed the message bits in
-                while (coeffCount < n)
-                {
-                    currentCoeff = (int)coeffs[index];
-                    if (currentCoeff != 0 && ((index % 64) != 0))
-                    {
-                        var coeffToEmbed = new Tuple<int, int>(index, currentCoeff);
-                        if(shrinkedCoeffId != -1)
-                        {
-                            coeffsToEmbed.Add(shrinkedCoeffId, coeffToEmbed);
-                        }
-                        else
-                        {
-                            coeffsToEmbed.Add(coeffCount, coeffToEmbed);
-                        }
-                        coeffCount++;
-                    }
-                    index++;
-                }
+                coeffsToEmbed = GetCoefficients(coeffs, coeffsToEmbed, n, ref index, ref coeffCount);
 
-                for(int i = 0; i < n; i++)
-                {
-                    //calculate hash
-                    var coeffToEmbed = coeffsToEmbed[i].Item2;
-                    var coeffLsb = coeffToEmbed > 0 ? 
-                        coeffToEmbed & 1 :
-                        (1 - (coeffToEmbed & 1));
-
-                    if (coeffLsb == 1)
-                        hash ^= i + 1;
-                }
+                //calculate hash
+                var hash = CalculateHash(n, coeffsToEmbed);
 
                 //get k bits to embed
-                if (shrinkedCoeffId == -1)
-                {
-                    bitsToEmbed = 0;
-                    for (int i = 0; i < k; i++)
-                    {
-                        if (availableBitsForEmbedding == 0)
-                        {
-                            if (messageByteIndex == messageBytes.Length)
-                                break;
-
-                            byteToEmbed = messageBytes[messageByteIndex];
-                            availableBitsForEmbedding = 8;
-                            messageByteIndex++;
-                        }
-
-                        var nextBitToEmbed = byteToEmbed & 1;
-                        byteToEmbed = byteToEmbed >> 1;
-                        availableBitsForEmbedding--;
-                        bitsToEmbed |= nextBitToEmbed << i;
-                    }
-                }
+                bitsToEmbed = GetBitsToEmbed(k, shrinkageOccured, messageBytes, bitsToEmbed, ref byteToEmbed, ref availableBitsForEmbedding, ref messageByteIndex);
 
                 //calculate which coeff to change
                 var coeffToChange = hash ^ bitsToEmbed;
+
                 if (coeffToChange == 0)
                 {
                     //No need to change coefficients - message bits are already there
-                    counter = counter + k;
-                    coeffsToEmbed = new Dictionary<int, Tuple<int, int>>();
-                    coeffCount = 0;
-                    hash = 0;
-                    shrinkedCoeffId = -1;
+                    counter = ResetCounterAndCoefficients(k, counter, out coeffsToEmbed, out coeffCount, out shrinkageOccured);
                 }
                 else
                 {
-                    //need to change coefficients
+                    //need to change coefficient value
                     coeffToChange -= 1;
-                    var coeffValueToChange = coeffsToEmbed[coeffToChange].Item2;
                     var coeffIndexToChange = coeffsToEmbed[coeffToChange].Item1;
-
-                    if (coeffValueToChange < 0)
-                        coeffs[coeffIndexToChange]++;
-
-                    if (coeffValueToChange > 0)
-                        coeffs[coeffIndexToChange]--;
-
+                    ModifyCoefficient(coeffs, coeffsToEmbed, coeffToChange, coeffIndexToChange);
 
                     //Check for shrinkage
                     if (coeffs[coeffIndexToChange] == 0)
                     {
                         coeffCount--;
-                        hash = 0;
-                        //shrinkedCoeffId = coeffToChange;
-                        //coeffsToEmbed.Remove(coeffToChange);
+                        shrinkageOccured = true;
 
-                        ///readjust coeffstoEmbed dictionary. 
-                        var c = coeffToChange;
-                        while (c < n - 1)
-                        {
-                            coeffsToEmbed.Remove(c);
-                            coeffsToEmbed.Add(c, coeffsToEmbed[c + 1]);
-                            c++;
-                        }
-                        coeffsToEmbed.Remove(n - 1);
-                        shrinkedCoeffId = n - 1;
-                        //adjust keys of other coeffs. or not, maybe first find coeffs, then calc hash. In current implementation, if shrinkage occues, the hash value is old from the previous set of coeffs.
+                        //re-adjust coeffsToEmbed dictionary. 
+                        ReorderCoeffsToEmbed(n, coeffsToEmbed, coeffToChange);
                     }
                     else
                     {
-                        counter = counter + k;
-                        coeffsToEmbed = new Dictionary<int, Tuple<int, int>>();
-                        coeffCount = 0;
-                        hash = 0;
-                        shrinkedCoeffId = -1;
+                        counter = ResetCounterAndCoefficients(k, counter, out coeffsToEmbed, out coeffCount, out shrinkageOccured);
                     }
                 }
             }
 
             return coeffs;
+        }
+
+        private int ResetCounterAndCoefficients(int k, int counter, out Dictionary<int, Tuple<int, int>> coeffsToEmbed, out int coeffCount, out bool shrinkageOccured)
+        {
+            counter = counter + k;
+            coeffsToEmbed = new Dictionary<int, Tuple<int, int>>();
+            coeffCount = 0;
+            shrinkageOccured = false;
+            return counter;
+        }
+
+        private void ReorderCoeffsToEmbed(int n, Dictionary<int, Tuple<int, int>> coeffsToEmbed, int coeffToChange)
+        {
+            var c = coeffToChange;
+            while (c < n - 1)
+            {
+                coeffsToEmbed.Remove(c);
+                coeffsToEmbed.Add(c, coeffsToEmbed[c + 1]);
+                c++;
+            }
+            coeffsToEmbed.Remove(n - 1);
+        }
+
+        private void ModifyCoefficient(float[] coeffs, Dictionary<int, Tuple<int, int>> coeffsToEmbed, int coeffToChange, int coeffIndexToChange)
+        {
+            var coeffValueToChange = coeffsToEmbed[coeffToChange].Item2;
+            if (coeffValueToChange < 0)
+                coeffs[coeffIndexToChange]++;
+
+            if (coeffValueToChange > 0)
+                coeffs[coeffIndexToChange]--;
+        }
+
+        private int GetBitsToEmbed(int k, bool shrinkageOccured, byte[] messageBytes, int bitsToEmbed, ref int byteToEmbed, ref int availableBitsForEmbedding, ref int messageByteIndex)
+        {
+            if (!shrinkageOccured)
+            {
+                //if no shrinkage, get new bits to embed, else bits to embed stay the same.
+                bitsToEmbed = 0;
+                for (int i = 0; i < k; i++)
+                {
+                    if (availableBitsForEmbedding == 0)
+                    {
+                        if (messageByteIndex == messageBytes.Length)
+                            break;
+
+                        byteToEmbed = messageBytes[messageByteIndex];
+                        availableBitsForEmbedding = 8;
+                        messageByteIndex++;
+                    }
+
+                    var nextBitToEmbed = (byteToEmbed  >> (availableBitsForEmbedding - 1)) & 1;
+                    //byteToEmbed = byteToEmbed >> 1;
+                    availableBitsForEmbedding--;
+                    //bitsToEmbed |= nextBitToEmbed << i;
+                    bitsToEmbed = bitsToEmbed << 1;
+                    bitsToEmbed |= nextBitToEmbed;
+                }
+            }
+
+            return bitsToEmbed;
+        }
+
+        private int CalculateHash(int n, Dictionary<int, Tuple<int, int>> coeffsToEmbed)
+        {
+            int hash = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                var coeffToEmbed = coeffsToEmbed[i].Item2;
+                var coeffLsb = coeffToEmbed > 0 ?
+                    coeffToEmbed & 1 :
+                    (1 - (coeffToEmbed & 1));
+
+                if (coeffLsb == 1)
+                    hash ^= i + 1;
+            }
+
+            return hash;
+        }
+
+        private Dictionary<int, Tuple<int, int>> GetCoefficients(float[] coeffs, Dictionary<int, Tuple<int, int>> coeffsToEmbed, int n, ref int index, ref int coeffCount)
+        {
+            int currentCoeff;
+
+            while (coeffCount < n)
+            {
+                currentCoeff = (int)coeffs[index];
+                if (currentCoeff != 0 && ((index % 64) != 0))
+                {
+                    AddCoefficientToArray(index, coeffsToEmbed, coeffCount, currentCoeff);
+                    coeffCount++;
+                }
+                index++;
+            }
+
+            return coeffsToEmbed;
+        }
+
+        private void AddCoefficientToArray(int index, Dictionary<int, Tuple<int, int>> coeffsToEmbed, int coeffCount, int currentCoeff)
+        {
+            var coeffToEmbed = new Tuple<int, int>(index, currentCoeff);
+
+            coeffsToEmbed.Add(coeffCount, coeffToEmbed);
         }
 
         /// <summary>
@@ -251,16 +282,16 @@ namespace Infrastructure.Services
         {
             var k = (byte)paramK;
 
-            // Convert byte "a" to an int and shift it to the left by 24 bits
             int kShifted = ((int)k) << 24;
 
-            // Use bitwise AND to get the lower 24 bits of int "b"
             int msgLenMasked = msgLen & 0x00FFFFFF;
 
-            // Use bitwise OR to combine the shifted byte "a" and masked int "b"
             int result = kShifted | msgLenMasked;
 
             return result;
         }
+
+        #endregion
+
     }
 }
