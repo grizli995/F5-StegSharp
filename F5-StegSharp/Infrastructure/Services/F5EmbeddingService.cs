@@ -76,6 +76,7 @@ namespace Infrastructure.Services
             var hash = 0;
             var currentCoeff = 0;
             var shrinkedCoeffId = -1;
+
             while (counter < messageBitLength)
             {
                 //get coefficients to embed the message bits in
@@ -92,7 +93,6 @@ namespace Infrastructure.Services
                         else
                         {
                             coeffsToEmbed.Add(coeffCount, coeffToEmbed);
-
                         }
                         coeffCount++;
                     }
@@ -102,28 +102,36 @@ namespace Infrastructure.Services
                 for(int i = 0; i < n; i++)
                 {
                     //calculate hash
-                    var coeffLsb = coeffsToEmbed[i].Item2 & 1;
+                    var coeffToEmbed = coeffsToEmbed[i].Item2;
+                    var coeffLsb = coeffToEmbed > 0 ? 
+                        coeffToEmbed & 1 :
+                        (1 - (coeffToEmbed & 1));
+
                     if (coeffLsb == 1)
-                        hash ^= coeffLsb + 1;
+                        hash ^= i + 1;
                 }
- 
+
                 //get k bits to embed
-                for(int i = 0; i < k; i++)
+                if (shrinkedCoeffId == -1)
                 {
-                    if(availableBitsForEmbedding == 0)
+                    bitsToEmbed = 0;
+                    for (int i = 0; i < k; i++)
                     {
-                        if (messageByteIndex == messageBytes.Length)
-                            break;
+                        if (availableBitsForEmbedding == 0)
+                        {
+                            if (messageByteIndex == messageBytes.Length)
+                                break;
 
-                        byteToEmbed = messageBytes[messageByteIndex];
-                        availableBitsForEmbedding = 8;
-                        messageByteIndex++;
+                            byteToEmbed = messageBytes[messageByteIndex];
+                            availableBitsForEmbedding = 8;
+                            messageByteIndex++;
+                        }
+
+                        var nextBitToEmbed = byteToEmbed & 1;
+                        byteToEmbed = byteToEmbed >> 1;
+                        availableBitsForEmbedding--;
+                        bitsToEmbed |= nextBitToEmbed << i;
                     }
-
-                    var nextBitToEmbed = byteToEmbed & 1;
-                    byteToEmbed = byteToEmbed >> 1;
-                    availableBitsForEmbedding--;
-                    bitsToEmbed |= nextBitToEmbed << i;
                 }
 
                 //calculate which coeff to change
@@ -155,8 +163,20 @@ namespace Infrastructure.Services
                     if (coeffs[coeffIndexToChange] == 0)
                     {
                         coeffCount--;
-                        shrinkedCoeffId = coeffToChange;
-                        coeffsToEmbed.Remove(coeffToChange);
+                        hash = 0;
+                        //shrinkedCoeffId = coeffToChange;
+                        //coeffsToEmbed.Remove(coeffToChange);
+
+                        ///readjust coeffstoEmbed dictionary. 
+                        var c = coeffToChange;
+                        while (c < n - 1)
+                        {
+                            coeffsToEmbed.Remove(c);
+                            coeffsToEmbed.Add(c, coeffsToEmbed[c + 1]);
+                            c++;
+                        }
+                        coeffsToEmbed.Remove(n - 1);
+                        shrinkedCoeffId = n - 1;
                         //adjust keys of other coeffs. or not, maybe first find coeffs, then calc hash. In current implementation, if shrinkage occues, the hash value is old from the previous set of coeffs.
                     }
                     else
@@ -185,13 +205,14 @@ namespace Infrastructure.Services
         {
             var messageBitLength = message.GetBitLength();
             var index = 0;
-            var counter = 0;
+            var counter = 31;
 
-            var byteToEmbed = PrepareDecodingInfo(k, messageBitLength);
+            var decodingInfo = PrepareDecodingInfo(k, messageBitLength);
 
-            var bitsToEmbed = new BitArray(byteToEmbed);
+            var bytesToEmbed = BitConverter.GetBytes(decodingInfo);
+            var bitsToEmbed = new BitArray(bytesToEmbed);
 
-            while (counter < 32)
+            while (counter >= 0)
             {
                 var coeff = (int)coeffs[index];
                 var bitToEmbed = Convert.ToInt32(bitsToEmbed[counter]);
@@ -220,7 +241,7 @@ namespace Infrastructure.Services
 
             if (coeffs[index] != 0)
             {
-                counter++;
+                counter--;
             }
 
             return counter;
