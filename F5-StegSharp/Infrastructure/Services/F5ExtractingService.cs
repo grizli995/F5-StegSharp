@@ -1,11 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
@@ -26,28 +21,30 @@ namespace Infrastructure.Services
 
         public string Extract(DCTData dctData, string password)
         {
-            //conver to mcu array
+            //step 1 - Convert dctData object to mcu array
             var mcuArray = _mcuConverterService.DCTDataToMCUArray(dctData);
 
-            //permutate mcu array
+            //step 2 - Permutate mcu array
             var permutatedMCUArray = _permutationService.PermutateArray(password, mcuArray, false);
 
-            //convert to coeff array
+            //step 3 - Convert permutated MCU array to coeff array
             var coeffs = _mcuConverterService.MCUArrayToCoeffArray(permutatedMCUArray);
 
+            //step 4 - Read decoding info (k and msgLen) and calculate n.
             //read first 32 bits, 8 for k 24 for length
             int k, msgLen;
-            var currentIndex = GetDecodingInfo(coeffs, out k, out msgLen);
+            var currentIndex = ReadDecodingInfo(coeffs, out k, out msgLen);
             var n = _f5ParameterCalulatorService.CalculateN(k);
 
-            //read untill end of message, take n coeffs, calculate hash to get the k bit value
-
-            //combine extracted values
+            //step 5 - Read embedded message 
             var result = ReadEmbeddedMessage(coeffs, k, n, msgLen, currentIndex);
+
             return result;
         }
 
-        private int GetDecodingInfo(float[] coeffs, out int k, out int msgLen)
+        #region Util
+
+        private int ReadDecodingInfo(float[] coeffs, out int k, out int msgLen)
         {
             var index = 0;
             var bitsRead = 0;
@@ -81,7 +78,7 @@ namespace Infrastructure.Services
             else return 0;
         }
 
-        public static void ExtractDecodedData(int input, out int upperByte, out int lowerInt)
+        public void ExtractDecodedData(int input, out int upperByte, out int lowerInt)
         {
             var value = (UInt32)(input);
             // Extract the upper byte by shifting the input right by 24 bits and casting to byte.
@@ -96,9 +93,7 @@ namespace Infrastructure.Services
             var counter = 0;
             var coeffCount = 0;
             var index = lastReadIndex + 1;
-            var hash = 0;
 
-            int[] coeffsToRead = new int[n];
             var messageBytes = new byte[msgLen / 8];
             var messageByteIndex = 0;
             var messageBitIndex = 0;
@@ -106,55 +101,77 @@ namespace Infrastructure.Services
             while (counter < msgLen)
             {
                 //get n coeffs
-                while (coeffCount < n)
-                {
-                    var coeff = (int)coeffs[index];
-                    if (coeff != 0 && ((index % 64) != 0))
-                    {
-                        coeffsToRead[coeffCount] = coeff;
-                        coeffCount++;
-                    }
-                    index++;
-                }
+                var coeffsToRead = GetCoefficients(coeffs, n, ref coeffCount, ref index);
 
                 //calculate hash
-                for (int i = 0; i < n; i++)
-                {
-                    var coeffToRead = coeffsToRead[i];
-                    var coeffLsb = coeffToRead > 0 ?
-                        coeffToRead & 1 :
-                        (1 - (coeffToRead & 1));
+                var hash = CalculateHash(n, coeffsToRead);
 
-                    if (coeffLsb == 1)
-                        hash ^= i + 1;
-                }
-
-                for(int i = k - 1; i >= 0; i--)
-                {
-                    var bitToExtract = (hash >> i) & 1;
-
-
-                    if(messageBitIndex == 8)
-                    {
-                        messageBitIndex = 0;
-                        messageByteIndex++;
-                    }
-
-                    messageBytes[messageByteIndex] = (byte)(messageBytes[messageByteIndex] << 1);
-
-                    messageBytes[messageByteIndex] = (byte)(messageBytes[messageByteIndex] | (byte)bitToExtract);
-                    messageBitIndex++;
-                }
+                ExtractMessageBits(k, messageBytes, ref messageByteIndex, ref messageBitIndex, hash);
 
                 counter = counter + k;
-                hash = 0;
                 coeffCount = 0;
-                coeffsToRead = new int[n];
-                //combine hash to result value
             }
 
             var result = Encoding.UTF8.GetString(messageBytes);
             return result;
         }
+
+        private void ExtractMessageBits(int k, byte[] messageBytes, ref int messageByteIndex, ref int messageBitIndex, int hash)
+        {
+            for (int i = k - 1; i >= 0; i--)
+            {
+                var bitToExtract = (hash >> i) & 1;
+
+                if (messageBitIndex == 8)
+                {
+                    messageBitIndex = 0;
+                    messageByteIndex++;
+                }
+
+                //combine bitToExtract to result value
+                messageBytes[messageByteIndex] = (byte)(messageBytes[messageByteIndex] << 1);
+
+                messageBytes[messageByteIndex] = (byte)(messageBytes[messageByteIndex] | (byte)bitToExtract);
+                messageBitIndex++;
+            }
+        }
+
+        private int CalculateHash(int n, int[] coeffsToRead)
+        {
+            int hash = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                var coeffToRead = coeffsToRead[i];
+                var coeffLsb = coeffToRead > 0 ?
+                    coeffToRead & 1 :
+                    (1 - (coeffToRead & 1));
+
+                if (coeffLsb == 1)
+                    hash ^= i + 1;
+            }
+
+            return hash;
+        }
+
+        private int[] GetCoefficients(float[] coeffs, int n, ref int coeffCount, ref int index)
+        {
+            int[] coeffsToRead = new int[n];
+
+            while (coeffCount < n)
+            {
+                var coeff = (int)coeffs[index];
+                if (coeff != 0 && ((index % 64) != 0))
+                {
+                    coeffsToRead[coeffCount] = coeff;
+                    coeffCount++;
+                }
+                index++;
+            }
+
+            return coeffsToRead;
+        }
+
+        #endregion
     }
 }
