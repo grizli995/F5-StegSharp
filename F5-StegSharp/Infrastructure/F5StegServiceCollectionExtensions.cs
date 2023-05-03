@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure
 {
-    public static class ConfigureServices
+    public static class F5StegServiceCollectionExtensions
     {
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services) 
+        public static IServiceCollection AddF5Services(this IServiceCollection services) 
         {
             services.AddScoped<IColorTransformationService, ColorTransformationService>();
             services.AddScoped<IF5Service, F5Service>();
