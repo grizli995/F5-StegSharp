@@ -1,5 +1,7 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Application.Models;
+using Infrastructure.Util.Extensions;
 using System.Text;
 
 namespace Infrastructure.Services
@@ -19,8 +21,22 @@ namespace Infrastructure.Services
             this._f5ParameterCalulatorService = f5ParameterCalulatorService;
         }
 
+        /// <summary>
+        /// Extracts message from the DCTData object, based on the given password.
+        /// </summary>
+        /// <param name="dctData">DCTData from which the message will be extracted.</param>
+        /// <param name="password">Password used for extracting.</param>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        /// <exception cref="MatrixEncodingException">Thrown if matrix encoding parameters are invalid.</exception>
+        /// <returns>Extracted message</returns>
         public string Extract(DCTData dctData, string password)
         {
+            if (dctData == null)
+                throw new ArgumentNullException(nameof(dctData), nameof(dctData).ToArgumentNullExceptionMessage());
+
+            if (String.IsNullOrEmpty(password))
+                throw new ArgumentNullException(nameof(password), nameof(password).ToArgumentNullExceptionMessage());
+
             //step 1 - Convert dctData object to mcu array
             var mcuArray = _mcuConverterService.DCTDataToMCUArray(dctData);
 
@@ -34,6 +50,10 @@ namespace Infrastructure.Services
             //read first 32 bits, 8 for k 24 for length
             int k, msgLen;
             var currentIndex = ReadDecodingInfo(coeffs, out k, out msgLen);
+
+            if (k > 9)
+                throw new MatrixEncodingException("Error while reading parameter k from the image.");
+
             var n = _f5ParameterCalulatorService.CalculateN(k);
 
             //step 5 - Read embedded message 

@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Infrastructure.Util.Extensions;
 using JpegLibrary;
 using System.Numerics;
 using System.Text;
@@ -15,8 +16,15 @@ namespace Infrastructure.Services
         /// <param name="inputArray">Input mcu array</param>
         /// <param name="reverse">If false permutate, if true permutate in the reverse order.</param>
         /// <returns>Permutated mcu array.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public JpegBlock8x8F[] PermutateArray(string password, JpegBlock8x8F[] inputArray, bool reverse)
         {
+            if (inputArray == null || inputArray.Length <= 0)
+                throw new ArgumentNullException(nameof(inputArray), nameof(inputArray).ToArgumentNullExceptionMessage());
+
+            if (String.IsNullOrEmpty(password))
+                throw new ArgumentNullException(nameof(password), nameof(password).ToArgumentNullExceptionMessage());
+
             var mcuCount = inputArray.Length - 1;
             JpegBlock8x8F[] permutedArray = (JpegBlock8x8F[])inputArray.Clone();
 

@@ -1,8 +1,8 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Infrastructure.Util;
 using Infrastructure.Util.Extensions;
 using JpegLibrary;
-using System.Transactions;
 
 namespace Infrastructure.Services
 {
@@ -26,15 +26,20 @@ namespace Infrastructure.Services
             return n;
         }
 
+
         /// <summary>
         /// Calculater parameter K of the matrix encoding. Calculates embedding rate and based on the predefined table, picks the value for k.
         /// </summary>
         /// <param name="mcus">MCU array</param>
         /// <param name="message">Message</param>
         /// <returns>Calculated value of K parameter.</returns>
-        /// <exception cref="Exception"></exception>
+        /// <exception cref="CapacityException">Thrown when there is not enough capacity for the message.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public int CalculateK(JpegBlock8x8F[] mcus, string message)
         {
+            if (mcus == null || mcus.Length <= 0)
+                throw new ArgumentNullException(nameof(mcus), nameof(mcus).ToArgumentNullExceptionMessage());
+
             double messageBitLength = message.GetBitLength();
             int reservedBitsForMsgLen = 32;
 
@@ -43,9 +48,9 @@ namespace Infrastructure.Services
             var dcCoeffCount = coefficients.Length / 64;
             double availableCoefficientCount = coefficients.Where(item => item != 0 && item != 1 && item != -1).Count() - dcCoeffCount - reservedBitsForMsgLen;
 
-            if (availableCoefficientCount <= 0)
+            if (availableCoefficientCount < messageBitLength)
             {
-                throw new Exception("No space to store message");
+                throw new CapacityException("Not enough capacity for the message.");
             }
 
             var calculatedEmbeddingRate = messageBitLength / availableCoefficientCount;
@@ -54,6 +59,7 @@ namespace Infrastructure.Services
             var optimalEmbeddingRate = FindClosestValue(embeddingRates, calculatedEmbeddingRate);
 
             var k = EmbeddingRateTable.Table.Where(item => item.EmbeddingRate == optimalEmbeddingRate).Select(item => item.K).FirstOrDefault();
+
             return k;
         }
 

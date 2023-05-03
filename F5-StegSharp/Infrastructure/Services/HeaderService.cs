@@ -9,8 +9,20 @@ namespace Infrastructure.Services
     {
         public HeaderService() { }
 
+        /// <summary>
+        /// Writes required JPEG headers to the binary writer. Supports baseline jpegs, with no subsampling.
+        /// </summary>
+        /// <param name="bw">Binary writer</param>
+        /// <param name="jpeg">Jpeg Information</param>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public void WriteHeaders(BinaryWriter bw, JpegInfo jpeg)
         {
+            if(jpeg == null) 
+                throw new ArgumentNullException(nameof(jpeg), nameof(jpeg).ToArgumentNullExceptionMessage());
+
+            if (bw == null)
+                throw new ArgumentNullException(nameof(bw), nameof(bw).ToArgumentNullExceptionMessage());
+
             WriteSOI(bw);
             WriteApp0(bw);
             WriteDQT(bw);
@@ -23,8 +35,12 @@ namespace Infrastructure.Services
         /// Writes "End Of Image" markers and data.
         /// </summary>
         /// <param name="bw"></param>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public void WriteEOI(BinaryWriter bw)
         {
+            if (bw == null)
+                throw new ArgumentNullException(nameof(bw), nameof(bw).ToArgumentNullExceptionMessage());
+
             bw.Write((byte)JpegMarker.Padding);
             bw.Write((byte)JpegMarker.EndOfImage);
         }
@@ -34,8 +50,15 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="br">Binary Reader</param>
         /// <param name="jpeg">Jpeg object where we will save parsed data.</param>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public void ParseJpegMarkers(BinaryReader br, JpegInfo jpeg)
         {
+            if (jpeg == null)
+                throw new ArgumentNullException(nameof(jpeg), nameof(jpeg).ToArgumentNullExceptionMessage());
+
+            if (br == null)
+                throw new ArgumentNullException(nameof(br), nameof(br).ToArgumentNullExceptionMessage());
+
             var currentByte = br.ReadByte();
             byte previousByte;
             var loop = true;

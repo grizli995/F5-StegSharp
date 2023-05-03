@@ -27,8 +27,18 @@ namespace Infrastructure.Services
         /// <param name="password">Password used for pseudo-random number generator.</param>
         /// <param name="message">Message to embed.</param>
         /// <returns>DCTData object with modified values based on the embedded message. </returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public DCTData Embed(DCTData quantizedData, string password, string message)
         {
+            if (quantizedData == null || quantizedData.YDCTData.Length <= 0)
+                throw new ArgumentNullException(nameof(quantizedData), nameof(quantizedData).ToArgumentNullExceptionMessage());
+
+            if (String.IsNullOrEmpty(password))
+                throw new ArgumentNullException(nameof(password), nameof(password).ToArgumentNullExceptionMessage());
+
+            if (String.IsNullOrEmpty(message))
+                return quantizedData;
+
             //step 1 - Convert dct data object to array of MCUs.
             var mcuArray = _mcuConverterService.DCTDataToMCUArray(quantizedData);
 
@@ -169,10 +179,8 @@ namespace Infrastructure.Services
                         messageByteIndex++;
                     }
 
-                    var nextBitToEmbed = (byteToEmbed  >> (availableBitsForEmbedding - 1)) & 1;
-                    //byteToEmbed = byteToEmbed >> 1;
+                    var nextBitToEmbed = (byteToEmbed >> (availableBitsForEmbedding - 1)) & 1;
                     availableBitsForEmbedding--;
-                    //bitsToEmbed |= nextBitToEmbed << i;
                     bitsToEmbed = bitsToEmbed << 1;
                     bitsToEmbed |= nextBitToEmbed;
                 }

@@ -21,21 +21,43 @@ namespace Infrastructure.Services
             InitHuffmanTables();
         }
 
+        /// <summary>
+        /// Reads and recodes chrominance DC from the binary reader.
+        /// </summary>
+        /// <param name="prevDC"></param>
+        /// <param name="bw"></param>
+        /// <returns></returns>
         public int DecodeChrominanceDC(int prevDC, BinaryReader br)
         {
             return DecodeDC(prevDC, br, _dcCrominanceDiffDict);
         }
 
+        /// <summary>
+        /// Reads and recodes luminance DC from the binary reader.
+        /// </summary>
+        /// <param name="prevDC"></param>
+        /// <param name="bw"></param>
+        /// <returns></returns>
         public int DecodeLuminanceDC(int prevDC, BinaryReader br)
         {
             return DecodeDC(prevDC, br, _dcLuminanceDiffDict);
         }
 
+        /// <summary>
+        /// Reads and recodes chrominance AC from the binary reader.
+        /// </summary>
+        /// <param name="bw"></param>
+        /// <returns></returns>
         public JpegBlock8x8F DecodeChrominanceAC(BinaryReader br)
         {
             return DecodeAC(br, _acCrominanceCoeffDict);
         }
 
+        /// <summary>
+        /// Reads and recodes luminance AC from the binary reader.
+        /// </summary>
+        /// <param name="bw"></param>
+        /// <returns></returns>
         public JpegBlock8x8F DecodeLuminanceAC(BinaryReader br)
         {
             return DecodeAC(br, _acLuminanceCoeffDict);

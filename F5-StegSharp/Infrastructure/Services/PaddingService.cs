@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
+using Infrastructure.Util.Extensions;
 
 namespace Infrastructure.Services
 {
@@ -7,16 +8,24 @@ namespace Infrastructure.Services
     {
         public PaddingService() { }
 
+        /// <summary>
+        /// Applies edge extension padding to YCBCR data. 
+        /// </summary>
+        /// <param name="input">YCBCR input data that will be padded.</param>
+        /// <param name="width">Original width</param>
+        /// <param name="height">Original height</param>
+        /// <returns>Returns new YCBCR data padded so that its new width and height are both divisible by 8.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public YCBCRData ApplyPadding(YCBCRData input, int width, int height)
         {
             if (input == null)
-                throw new ArgumentNullException(nameof(input));
+                throw new ArgumentNullException(nameof(input), nameof(input).ToArgumentNullExceptionMessage());
 
-            if (width < 0)
-                throw new ArgumentOutOfRangeException(nameof(width));
+            if (width <= 0)
+                throw new ArgumentNullException(nameof(width), nameof(width).ToArgumentEqualsZeroExceptionMessage());
 
-            if (height < 0)
-                throw new ArgumentOutOfRangeException(nameof(height));
+            if (height <= 0)
+                throw new ArgumentNullException(nameof(height), nameof(height).ToArgumentEqualsZeroExceptionMessage());
 
             if (width % 8 == 0 && height % 8 == 0)
                 return input;
@@ -30,6 +39,11 @@ namespace Infrastructure.Services
             return result;
         }
 
+        /// <summary>
+        /// Calculate padded input (height or width)
+        /// </summary>
+        /// <param name="input">Input</param>
+        /// <returns>New padded value, which will be equal to or greater than the input, but divisible by 8.</returns>
         public int CalculatePaddedDimension(int input)
         {
             int paddedResult;

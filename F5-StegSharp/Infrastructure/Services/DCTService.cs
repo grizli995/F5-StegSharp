@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
 using Domain;
+using Infrastructure.Util.Extensions;
 using JpegLibrary;
 using MethodTimer;
 using System.Runtime.CompilerServices;
@@ -15,13 +16,25 @@ namespace Infrastructure.Services
             this._paddingService = paddingService;
         }
 
+        /// <summary>
+        /// Calculates the 2-D Discrete Cosine Transformation on the entire image, for all 3 components. 
+        /// </summary>
+        /// <param name="input">Input YCBCR data.</param>
+        /// <param name="width">Width of the original image.</param>
+        /// <param name="height">Height of the original image.</param>
+        /// <returns>DCTData object, containing computed result for all components.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         [Time]
         public DCTData CalculateDCT(YCBCRData input, int width, int height)
         {
             if (input == null)
-                throw new ArgumentNullException(nameof(input));
+                throw new ArgumentNullException(nameof(input), nameof(input).ToArgumentNullExceptionMessage());
 
-            DCTData result = new DCTData();
+            if (width <= 0)
+                throw new ArgumentNullException(nameof(width), nameof(width).ToArgumentEqualsZeroExceptionMessage());
+
+            if (height <= 0)
+                throw new ArgumentNullException(nameof(height), nameof(height).ToArgumentEqualsZeroExceptionMessage());
 
             //pad input to fit 8x8 blocks.
             var paddedInput = _paddingService.ApplyPadding(input, width, height);
@@ -29,7 +42,7 @@ namespace Infrastructure.Services
             var paddedHeight = _paddingService.CalculatePaddedDimension(height);
 
             //split ycbcr data into blocks
-            result = CreateMCUs(paddedInput, paddedWidth, paddedHeight);
+            var result = CreateMCUs(paddedInput, paddedWidth, paddedHeight);
 
             //perform DCT calculation
             result = ApplyDCT(result, paddedWidth, paddedHeight);
@@ -37,10 +50,18 @@ namespace Infrastructure.Services
             return result;
         }
 
+        /// <summary>
+        /// Quantizes input DCT data for all color components. 
+        /// </summary>
+        /// <param name="input">DCT data to quantisize.</param>
+        /// <param name="chrominanceTable">Chrominance table used for red and blue color component. If null, will use default table.</param>
+        /// <param name="luminanceTable">Luminance table used for Y color component. If null, will use default table.</param>
+        /// <returns>DCTData object which contains quantized MCUs for all 3 color components.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public DCTData QuantizeDCT(DCTData input, byte[] chrominanceTable, byte[] luminanceTable)
         {
             if (input == null)
-                throw new ArgumentNullException(nameof(input));
+                throw new ArgumentNullException(nameof(input), nameof(input).ToArgumentNullExceptionMessage());
 
             if (chrominanceTable == null)
                 chrominanceTable = JpegStandardQuantizationTable.ChrominanceTable;

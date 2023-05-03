@@ -5,17 +5,19 @@ namespace Application.Common.Interfaces
     public interface IEncodingOrchestratorService
     {
         /// <summary>
-        /// Orchestrates the encoding process for all MCUs. Covers both run length encoding and huffman encoding.
+        /// Orchestrates both encodings required for JPEG compression. (Run-Length & Huffman encoding)
         /// </summary>
-        /// <param name="quantizedDCTData"></param>
-        /// <param name="bw"></param>
+        /// <param name="quantizedDCTData">MCU data to encode</param>
+        /// <param name="bw">BinaryWriter</param>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public void EncodeData(DCTData quantizedDCTData, BinaryWriter bw);
 
         /// <summary>
-        /// Orchestrates the decoding process for all MCUs. Covers both run length decoding and huffman decoding.
+        /// Orchestrates both decodings required for JPEG compression. (Run-Length & Huffman decoding)
         /// </summary>
-        /// <param name="quantizedDCTData"></param>
-        /// <param name="bw"></param>
+        /// <param name="jpeg">Jpeg information</param>
+        /// <param name="bw">BinaryWriter</param>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public DCTData DecodeData(JpegInfo jpeg, BinaryReader bw);
     }
 }

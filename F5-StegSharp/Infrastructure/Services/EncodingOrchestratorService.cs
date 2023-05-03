@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
+using Infrastructure.Util.Extensions;
 using JpegLibrary;
 
 namespace Infrastructure.Services
@@ -19,8 +20,20 @@ namespace Infrastructure.Services
             this._huffmanDecodingService = huffmanDecodingService;
         }
 
+        /// <summary>
+        /// Orchestrates both encodings required for JPEG compression. (Run-Length & Huffman encoding)
+        /// </summary>
+        /// <param name="quantizedDCTData">MCU data to encode</param>
+        /// <param name="bw">BinaryWriter</param>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public void EncodeData(DCTData quantizedDCTData, BinaryWriter bw)
         {
+            if (quantizedDCTData == null)
+                throw new ArgumentNullException(nameof(quantizedDCTData), nameof(quantizedDCTData).ToArgumentNullExceptionMessage());
+
+            if (bw == null)
+                throw new ArgumentNullException(nameof(bw), nameof(bw).ToArgumentNullExceptionMessage());
+
             var mcuCount = quantizedDCTData.YDCTData.Length;
             var prevDc_Y = 0;
             var prevDc_Cr = 0;
@@ -44,8 +57,20 @@ namespace Infrastructure.Services
             _huffmanEncodingService.FlushBuffer(bw);
         }
 
+        /// <summary>
+        /// Orchestrates both decodings required for JPEG compression. (Run-Length & Huffman decoding)
+        /// </summary>
+        /// <param name="jpeg">Jpeg information</param>
+        /// <param name="bw">BinaryWriter</param>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public DCTData DecodeData(JpegInfo jpeg, BinaryReader br)
         {
+            if (jpeg == null)
+                throw new ArgumentNullException(nameof(jpeg), nameof(jpeg).ToArgumentNullExceptionMessage());
+
+            if (br == null)
+                throw new ArgumentNullException(nameof(br), nameof(br).ToArgumentNullExceptionMessage());
+
             int mcuCount = CalculateMCUCount(jpeg);
             var result = new DCTData(mcuCount);
 

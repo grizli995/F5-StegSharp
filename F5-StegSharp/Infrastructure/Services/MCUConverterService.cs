@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
+using Infrastructure.Util.Extensions;
 using JpegLibrary;
 
 namespace Infrastructure.Services
@@ -11,8 +12,12 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="dct"></param>
         /// <returns>MCU Array</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public JpegBlock8x8F[] DCTDataToMCUArray(DCTData dct)
         {
+            if (dct == null || dct.YDCTData.Length <= 0)
+                throw new ArgumentNullException(nameof(dct), nameof(dct).ToArgumentNullExceptionMessage());
+
             var numberOfComponents = 3;
             var mcuPerComponentCount = dct.YDCTData.Length;
             JpegBlock8x8F[] result = new JpegBlock8x8F[mcuPerComponentCount * numberOfComponents];
@@ -33,8 +38,12 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="dctArray">MCU array</param>
         /// <returns>Coefficient Array</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public float[] MCUArrayToCoeffArray(JpegBlock8x8F[] dctArray)
         {
+            if (dctArray == null || dctArray.Length <= 0)
+                throw new ArgumentNullException(nameof(dctArray), nameof(dctArray).ToArgumentNullExceptionMessage());
+
             var coeffPerMcu = 64;
             var totalMcuCount = dctArray.Length;
             float[] result = new float[totalMcuCount * coeffPerMcu];
@@ -57,8 +66,12 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="mcuArray">MCU Array</param>
         /// <returns>DCTData object</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public DCTData MCUArrayToDCTData(JpegBlock8x8F[] mcuArray)
         {
+            if (mcuArray == null || mcuArray.Length <= 0)
+                throw new ArgumentNullException(nameof(mcuArray), nameof(mcuArray).ToArgumentNullExceptionMessage());
+
             var numberOfComponents = 3;
             var mcuPerComponentCount = mcuArray.Length / numberOfComponents;
             DCTData result = new DCTData(mcuPerComponentCount);
