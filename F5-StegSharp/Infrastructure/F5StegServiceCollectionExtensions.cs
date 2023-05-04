@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure
 {
-    public static class ConfigureServices
+    public static class F5StegServiceCollectionExtensions
     {
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services) 
+        public static IServiceCollection AddF5Services(this IServiceCollection services) 
         {
             services.AddScoped<IColorTransformationService, ColorTransformationService>();
             services.AddScoped<IF5Service, F5Service>();
@@ -16,6 +16,13 @@ namespace Infrastructure
             services.AddScoped<IHuffmanEncodingService, HuffmanEncodingService>();
             services.AddScoped<IEncodingOrchestratorService, EncodingOrchestratorService>();
             services.AddScoped<IHeaderService, HeaderService>();
+            services.AddScoped<IHuffmanDecodingService, HuffmanDecodingService>();
+            services.AddScoped<IBitReaderService, BitReaderService>();
+            services.AddScoped<IMCUConverterService, MCUConverterService>();
+            services.AddScoped<IF5EmbeddingService, F5EmbeddingService>();
+            services.AddScoped<IPermutationService, PermutationService>();
+            services.AddScoped<IF5ParameterCalculatorService, F5ParameterCalculatorService>();
+            services.AddScoped<IF5ExtractingService, F5ExtractingService>();
 
             return services;
         }

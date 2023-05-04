@@ -20,21 +20,43 @@ namespace Infrastructure.Services
             this._runLengthEncodingService = runLengthEncodingService;
         }
 
+        /// <summary>
+        /// Encodes AC coefficient of the Chrominance component.
+        /// </summary>
+        /// <param name="block">MCU containing all coefficients (AC & DC)</param>
+        /// <param name="bw">BinaryWriter</param>
         public void EncodeChrominanceAC(JpegBlock8x8F block, BinaryWriter bw)
         {
             EncodeAC(block, bw, _acCrominanceCoeffTable);
         }
 
+        /// <summary>
+        /// Encodes AC coefficient of the Luminance component.
+        /// </summary>
+        /// <param name="block">MCU containing all coefficients (AC & DC)</param>
+        /// <param name="bw">BinaryWriter</param>
         public void EncodeLuminanceAC(JpegBlock8x8F block, BinaryWriter bw)
         {
             EncodeAC(block, bw, _acLuminanceCoeffTable);
         }
 
+        /// <summary>
+        /// Encodes DC coefficient of the Chrominance component.
+        /// </summary>
+        /// <param name="dc">DC coefficient</param>
+        /// <param name="prevDC">Previous DC coefficient</param>
+        /// <param name="bw">BinaryWriter</param>
         public void EncodeChrominanceDC(int dc, int prevDC, BinaryWriter bw)
         {
             EncodeDC(dc, prevDC, bw, _dcCrominanceDiffTable);
         }
 
+        /// <summary>
+        /// Encodes DC coefficient of the Luminance component.
+        /// </summary>
+        /// <param name="dc">DC coefficient</param>
+        /// <param name="prevDC">Previous DC coefficient</param>
+        /// <param name="bw">BinaryWriter</param>
         public void EncodeLuminanceDC(int dc, int prevDC, BinaryWriter bw)
         {
             EncodeDC(dc, prevDC, bw, _dcLuminanceDiffTable);

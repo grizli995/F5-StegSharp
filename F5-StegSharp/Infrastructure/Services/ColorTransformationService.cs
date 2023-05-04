@@ -1,21 +1,23 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models;
 using Domain;
-using System;
-using System.Collections.Generic;
+using Infrastructure.Util.Extensions;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
     public class ColorTransformationService : IColorTransformationService
     {
+        /// <summary>
+        /// Converts the provided bitmap from RGB color space to YCbCr color space.
+        /// </summary>
+        /// <param name="bmp">Input bitmap</param>
+        /// <returns>YCBCR Data containing 3 components for Y, CB and CR.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         public YCBCRData RGBToYCbCr(Bitmap bmp)
         {
             if (bmp == null)
-                throw new ArgumentNullException(nameof(bmp));
+                throw new ArgumentNullException(nameof(bmp), nameof(bmp).ToArgumentNullExceptionMessage());
 
             var result = new YCBCRData(bmp.Width, bmp.Height);
 
@@ -52,7 +54,6 @@ namespace Infrastructure.Services
                 }
             }
         }
-
 
         #endregion
     }

@@ -1,9 +1,4 @@
 ﻿using JpegLibrary;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Models
 {
@@ -18,6 +13,13 @@ namespace Application.Models
             this.YDCTData = new JpegBlock8x8F[] { };
             this.CRDCTData = new JpegBlock8x8F[] { };
             this.CBDCTData = new JpegBlock8x8F[] { };
+        }
+
+        public DCTData(int dctCount)
+        {
+            this.YDCTData = new JpegBlock8x8F[dctCount];
+            this.CRDCTData = new JpegBlock8x8F[dctCount];
+            this.CBDCTData = new JpegBlock8x8F[dctCount];
         }
     }
 }

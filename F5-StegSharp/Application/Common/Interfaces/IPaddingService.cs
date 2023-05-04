@@ -11,6 +11,7 @@ namespace Application.Common.Interfaces
         /// <param name="width">Original width</param>
         /// <param name="height">Original height</param>
         /// <returns>Returns new YCBCR data padded so that its new width and height are both divisible by 8.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         YCBCRData ApplyPadding(YCBCRData input, int width, int height);
 
 
