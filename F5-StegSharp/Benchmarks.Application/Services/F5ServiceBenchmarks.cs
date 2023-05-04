@@ -45,7 +45,7 @@ namespace Benchmarks.Application.Services
             var services = new ServiceCollection();
 
             // Register the services provided by the class library projects
-            services.AddInfrastructureServices();
+            services.AddF5Services();
 
             // Build the service provider
             var serviceProvider = services.BuildServiceProvider();

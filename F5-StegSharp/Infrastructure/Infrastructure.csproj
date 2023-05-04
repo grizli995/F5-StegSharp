@@ -4,7 +4,29 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>Grizlah.Steganography.F5.$(AssemblyName)</PackageId>
+    <Title>F5-StegSharp</Title>
+    <Authors>Grizlah</Authors>
+    <Product>F5-StegSharp</Product>
+    <Description>F5-StegSharp is a lightweight and efficient C# library providing seamless integration of the F5 steganography algorithm in .NET applications. Supports baseline JPEG images, matrix encoding, and adaptive embedding. </Description>
+    <PackageProjectUrl></PackageProjectUrl>
+    <PackageIcon>F5-StegSharp-ICON.jpg</PackageIcon>
+    <RepositoryUrl>https://github.com/grizli995/F5-StegSharp</RepositoryUrl>
+    <RootNamespace>F5-StegSharp.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>security, steganography, f5</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\..\..\Users\grizl\Downloads\F5-StegSharp-ICON.jpg">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\..\..\..\..\..\..\Users\grizl\Downloads\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MethodTimer.Fody" Version="3.2.1" />

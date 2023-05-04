@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Application.Models;
 using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,7 @@ public class Program
         var services = new ServiceCollection();
 
         // Register the services provided by the class library projects
-        services.AddInfrastructureServices();
+        services.AddF5Services();
 
         // Build the service provider
         var serviceProvider = services.BuildServiceProvider();
@@ -27,7 +28,7 @@ public class Program
 
         //string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\micpic.jpg"; // replace with the path to your JPEG image file
         //string filePathExtract = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavic.jpg"; // replace with the path to your JPEG image file
-        string filePathExtract = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\Output\\jo-Stego-OUTPUT-02052023015422.jpg"; // replace with the path to your JPEG image file
+        string filePathExtract = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\Output\\jo-Stego-OUTPUT-03052023063706.jpg"; // replace with the path to your JPEG image file
         //string filePathExtract = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\Output\\ljubavicMalic-OUTPUT-14042023052620.jpg"; // replace with the path to your JPEG image file
         string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\jo.jpg"; // replace with the path to your JPEG image file
         //string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavicMalic.jpg"; // replace with the path to your JPEG image file
@@ -40,7 +41,20 @@ public class Program
         {
             using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
             {
-                originalDCTs = service.Embed(image, "test", "Laza voli Jovanu!!", binaryWriter);
+                var msg = "";
+                //originalDCTs = service.Embed(image, "test", "Laza voli Jovanu!! NAJVISE NA CELOM SVETU BREE!", binaryWriter);
+                try
+                {
+                    service.Embed(image, "testovic", msg, binaryWriter);
+                }
+                catch (CapacityException ce)
+                {
+                    Console.WriteLine("uga buga");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Generalni uga buga");
+                }
             }
         }
 
@@ -48,37 +62,7 @@ public class Program
         {
             using (BinaryReader binaryReader = new BinaryReader(fileStream))
             {
-                extractedDCTs = service.ExtractDCT("test", binaryReader);
-            }
-        }
-
-        CheckIfEqual(originalDCTs, extractedDCTs);
-    }
-
-    private static void CheckIfEqual(DCTData originalDCTs, DCTData extractedDCTs)
-    {
-        var missmatchCount = 0;
-        List<Tuple<float, float>> missmathces = new List<Tuple<float, float>>();
-        var mcuCount = originalDCTs.YDCTData.Length;
-        for(int i = 0; i < mcuCount; i++)
-        {
-            for(int j = 0; j < 64; j++)
-            {
-                if (originalDCTs.YDCTData[i][j] != extractedDCTs.YDCTData[i][j])
-                {
-                    missmatchCount++;
-                    missmathces.Add(new Tuple<float, float>(originalDCTs.YDCTData[i][j], extractedDCTs.YDCTData[i][j]));
-                }
-                if (originalDCTs.CBDCTData[i][j] != extractedDCTs.CBDCTData[i][j])
-                {
-                    missmatchCount++;
-                    missmathces.Add(new Tuple<float, float>(originalDCTs.CBDCTData[i][j], extractedDCTs.CBDCTData[i][j]));
-                }
-                if (originalDCTs.CRDCTData[i][j] != extractedDCTs.CRDCTData[i][j])
-                {
-                    missmatchCount++;
-                    missmathces.Add(new Tuple<float, float>(originalDCTs.CRDCTData[i][j], extractedDCTs.CRDCTData[i][j]));
-                }
+                var msg = service.Extract("testovic", binaryReader);
             }
         }
     }
