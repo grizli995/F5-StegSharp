@@ -43,14 +43,15 @@ public class Program
                         try
                         {
                             service.Embed(image, password, message, binaryWriter);
+                            Console.WriteLine("Message successfully embedded.");
                         }
                         catch (CapacityException ce)
                         {
-                            Console.WriteLine("uga buga");
+                            Console.WriteLine(ce.Message);
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("Generalni uga buga");
+                            Console.WriteLine(e.Message);
                         }
                     }
                 }
@@ -64,15 +65,26 @@ public class Program
                 var password = Console.ReadLine();
 
                 string msg = string.Empty;
-                using (FileStream fileStream = new FileStream(filePathExtract, FileMode.OpenOrCreate, FileAccess.Read))
+                try
                 {
-                    using (BinaryReader binaryReader = new BinaryReader(fileStream))
+                    using (FileStream fileStream = new FileStream(filePathExtract, FileMode.OpenOrCreate, FileAccess.Read))
                     {
-                        msg = service.Extract(password, binaryReader);
+                        using (BinaryReader binaryReader = new BinaryReader(fileStream))
+                        {
+                            msg = service.Extract(password, binaryReader);
+                        }
                     }
-                }
 
-                Console.WriteLine(msg);
+                    Console.WriteLine(msg);
+                }
+                catch (MatrixEncodingException me)
+                {
+                    Console.WriteLine(me.Message);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
             else
             {
