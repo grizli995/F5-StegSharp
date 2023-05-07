@@ -1,4 +1,5 @@
-﻿using StegSharp.Application.Common.Interfaces;
+﻿using StegSharp.Application.Common.Exceptions;
+using StegSharp.Application.Common.Interfaces;
 using StegSharp.Application.Models;
 using StegSharp.Infrastructure.Util.Extensions;
 using System.Drawing;
@@ -77,6 +78,32 @@ namespace StegSharp.Infrastructure.Services
         }
 
         /// <summary>
+        /// Embeds the input message with the provided password using F5 algorithm, and writes jpeg image as output inside the provided BinaryWriter.
+        /// </summary>
+        /// <param name="imagePath">Path to the Image to embed the message in.</param>
+        /// <param name="password">Password used for embedding the message.</param>
+        /// <param name="message">Message to embed.</param>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        public void Embed(string imagePath, string outPath, string password, string message)
+        {
+            if (String.IsNullOrEmpty(imagePath))
+                throw new ArgumentNullException(nameof(imagePath), nameof(imagePath).ToArgumentNullExceptionMessage());
+
+            if (String.IsNullOrEmpty(outPath))
+                throw new ArgumentNullException(nameof(outPath), nameof(outPath).ToArgumentNullExceptionMessage());
+
+            Image image = Image.FromFile(imagePath);
+
+            using (FileStream fileStream = new FileStream(outPath, FileMode.Create, FileAccess.Write))
+            {
+                using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
+                {
+                    this.Embed(image, password, message, binaryWriter);
+                }
+            }
+        }
+
+        /// <summary>
         /// Extracts the hidden message, based on the provided password using F5 algorithm, from the jpeg image that is inside the binaryReader.
         /// </summary>
         /// <param name="password">Password used for extracting the message.</param>
@@ -102,6 +129,30 @@ namespace StegSharp.Infrastructure.Services
 
             //Extract the message from the decoded data.
             var message = _extractingService.Extract(quantizedDctData, password);
+
+            return message;
+        }
+
+        /// <summary>
+        /// Extracts the hidden message, based on the provided password using F5 algorithm, from the jpeg image that is inside the binaryReader.
+        /// </summary>
+        /// <param name="password">Password used for extracting the message.</param>
+        /// <param name="imagePath">Path to the Image to embed the message in.</param>
+        /// <returns>Extracted message.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        public string Extract(string imagePath, string password)
+        {
+            if (String.IsNullOrEmpty(imagePath))
+                throw new ArgumentNullException(nameof(imagePath), nameof(imagePath).ToArgumentNullExceptionMessage());
+
+            string message;
+            using (FileStream fileStream = new FileStream(imagePath, FileMode.OpenOrCreate, FileAccess.Read))
+            {
+                using (BinaryReader binaryReader = new BinaryReader(fileStream))
+                {
+                    message = this.Extract(password, binaryReader);
+                }
+            }
 
             return message;
         }
