@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,37 +6,44 @@
     <Nullable>enable</Nullable>
     <PackageId>Grizlah.Steganography.F5.$(AssemblyName)</PackageId>
     <Title>F5-StegSharp</Title>
-    <Authors>Grizlah</Authors>
+    <Authors>Lazar Nikolic</Authors>
     <Product>F5-StegSharp</Product>
     <Description>F5-StegSharp is a lightweight and efficient C# library providing seamless integration of the F5 steganography algorithm in .NET applications. Supports baseline JPEG images, matrix encoding, and adaptive embedding. </Description>
     <PackageProjectUrl></PackageProjectUrl>
     <PackageIcon>F5-StegSharp-ICON.jpg</PackageIcon>
     <RepositoryUrl>https://github.com/grizli995/F5-StegSharp</RepositoryUrl>
-    <RootNamespace>F5-StegSharp.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>security, steganography, f5</PackageTags>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\..\..\..\..\..\Users\grizl\Downloads\F5-StegSharp-ICON.jpg">
+    <None Include="..\..\F5-StegSharp-ICON.jpg">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\..\..\..\..\..\..\..\Users\grizl\Downloads\README.md">
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Grizlah.Steganography.F5.StegSharp.Application" Version="1.0.1" />
+    <PackageReference Include="Grizlah.Steganography.F5.StegSharp.Domain" Version="1.0.0" />
     <PackageReference Include="MethodTimer.Fody" Version="3.2.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Application\Application.csproj" />
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Application\StegSharp.Application.csproj" />
+    <ProjectReference Include="..\Domain\StegSharp.Domain.csproj" />
   </ItemGroup>
-
 </Project>

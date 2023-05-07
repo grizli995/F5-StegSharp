@@ -1,9 +1,9 @@
-﻿using Application.Common.Interfaces;
-using Application.Models;
-using Infrastructure.Util.Extensions;
+﻿using StegSharp.Application.Common.Interfaces;
+using StegSharp.Application.Models;
+using StegSharp.Infrastructure.Util.Extensions;
 using System.Drawing;
 
-namespace Infrastructure.Services
+namespace StegSharp.Infrastructure.Services
 {
     public class F5Service : IF5Service
     {

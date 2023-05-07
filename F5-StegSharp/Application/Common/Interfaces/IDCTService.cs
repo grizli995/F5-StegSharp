@@ -1,12 +1,6 @@
-﻿using Application.Models;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StegSharp.Application.Models;
 
-namespace Application.Common.Interfaces
+namespace StegSharp.Application.Common.Interfaces
 {
     public interface IDCTService
     {

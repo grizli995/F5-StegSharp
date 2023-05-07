@@ -1,4 +1,4 @@
-﻿namespace Application.Common.Exceptions
+﻿namespace StegSharp.Application.Common.Exceptions
 {
     public class MatrixEncodingException : Exception
     {

@@ -1,6 +1,6 @@
-﻿using Application.Common.Interfaces;
+﻿using StegSharp.Application.Common.Interfaces;
 
-namespace Infrastructure.Services
+namespace StegSharp.Infrastructure.Services
 {
     public class BitReaderService : IBitReaderService
     {

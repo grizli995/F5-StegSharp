@@ -1,10 +1,10 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
-using Application.Models;
-using Infrastructure.Util.Extensions;
+﻿using StegSharp.Application.Common.Exceptions;
+using StegSharp.Application.Common.Interfaces;
+using StegSharp.Application.Models;
+using StegSharp.Infrastructure.Util.Extensions;
 using System.Text;
 
-namespace Infrastructure.Services
+namespace StegSharp.Infrastructure.Services
 {
     public class F5ExtractingService : IF5ExtractingService
     {

@@ -1,10 +1,10 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
-using Infrastructure.Util;
-using Infrastructure.Util.Extensions;
+﻿using StegSharp.Application.Common.Exceptions;
+using StegSharp.Application.Common.Interfaces;
+using StegSharp.Infrastructure.Util;
+using StegSharp.Infrastructure.Util.Extensions;
 using JpegLibrary;
 
-namespace Infrastructure.Services
+namespace StegSharp.Infrastructure.Services
 {
     internal class F5ParameterCalculatorService : IF5ParameterCalculatorService
     {

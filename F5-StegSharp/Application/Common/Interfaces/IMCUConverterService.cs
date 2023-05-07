@@ -1,7 +1,7 @@
-﻿using Application.Models;
+﻿using StegSharp.Application.Models;
 using JpegLibrary;
 
-namespace Application.Common.Interfaces
+namespace StegSharp.Application.Common.Interfaces
 {
     public interface IMCUConverterService
     {

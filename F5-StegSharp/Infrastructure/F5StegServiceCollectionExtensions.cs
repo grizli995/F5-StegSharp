@@ -1,8 +1,8 @@
-﻿using Application.Common.Interfaces;
-using Infrastructure.Services;
+﻿using StegSharp.Application.Common.Interfaces;
+using StegSharp.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Infrastructure
+namespace StegSharp.Infrastructure
 {
     public static class F5StegServiceCollectionExtensions
     {

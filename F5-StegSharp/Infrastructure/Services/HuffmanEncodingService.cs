@@ -1,8 +1,8 @@
-﻿using Application.Common.Interfaces;
-using Domain;
+﻿using StegSharp.Application.Common.Interfaces;
+using StegSharp.Domain;
 using JpegLibrary;
 
-namespace Infrastructure.Services
+namespace StegSharp.Infrastructure.Services
 {
     public class HuffmanEncodingService : IHuffmanEncodingService
     {

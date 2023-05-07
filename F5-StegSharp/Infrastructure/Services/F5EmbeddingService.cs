@@ -1,9 +1,9 @@
-﻿using Application.Common.Interfaces;
-using Application.Models;
-using Infrastructure.Util.Extensions;
+﻿using StegSharp.Application.Common.Interfaces;
+using StegSharp.Application.Models;
+using StegSharp.Infrastructure.Util.Extensions;
 using System.Collections;
 
-namespace Infrastructure.Services
+namespace StegSharp.Infrastructure.Services
 {
     public class F5EmbeddingService : IF5EmbeddingService
     {

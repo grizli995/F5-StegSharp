@@ -1,6 +1,6 @@
-﻿using Domain;
+﻿using StegSharp.Domain;
 
-namespace Application.Models
+namespace StegSharp.Application.Models
 {
     public class JpegHuffmanTableData
     {

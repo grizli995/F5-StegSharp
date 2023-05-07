@@ -9,11 +9,12 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+    <PackageReference Include="Grizlah.Steganography.F5.StegSharp.Application" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Application\Application.csproj" />
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Application\StegSharp.Application.csproj" />
+    <ProjectReference Include="..\Infrastructure\StegSharp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
-﻿using Application.Models;
+﻿using StegSharp.Application.Models;
 
-namespace Application.Common.Interfaces
+namespace StegSharp.Application.Common.Interfaces
 {
     public interface IF5ExtractingService
     {

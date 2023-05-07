@@ -1,6 +1,6 @@
-﻿using Application.Models;
+﻿using StegSharp.Application.Models;
 
-namespace Infrastructure.Util
+namespace StegSharp.Infrastructure.Util
 {
     public static class EmbeddingRateTable
     {

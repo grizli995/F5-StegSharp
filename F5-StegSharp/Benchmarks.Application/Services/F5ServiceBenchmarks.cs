@@ -1,6 +1,6 @@
-﻿using Application.Common.Interfaces;
+﻿using StegSharp.Application.Common.Interfaces;
 using BenchmarkDotNet.Attributes;
-using Infrastructure;
+using StegSharp.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

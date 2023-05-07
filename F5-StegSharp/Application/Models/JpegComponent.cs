@@ -1,4 +1,4 @@
-﻿namespace Application.Models
+﻿namespace StegSharp.Application.Models
 {
     public class JpegComponent
     {
@@ -11,5 +11,12 @@
         public int DCHuffmanTableId { get; set; }
         
         public int ACHuffmanTableId { get; set; }
+
+        public JpegComponent() { }
+
+        public JpegComponent(int id)
+        {
+            Id = id;
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using JpegLibrary;
 
-namespace Application.Models
+namespace StegSharp.Application.Models
 {
     public class DCTData
     {

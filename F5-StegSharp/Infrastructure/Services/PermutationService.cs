@@ -1,10 +1,10 @@
-﻿using Application.Common.Interfaces;
-using Infrastructure.Util.Extensions;
+﻿using StegSharp.Application.Common.Interfaces;
+using StegSharp.Infrastructure.Util.Extensions;
 using JpegLibrary;
 using System.Numerics;
 using System.Text;
 
-namespace Infrastructure.Services
+namespace StegSharp.Infrastructure.Services
 {
     internal class PermutationService : IPermutationService
     {

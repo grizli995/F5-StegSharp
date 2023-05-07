@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Application.Common.Interfaces
+namespace StegSharp.Application.Common.Interfaces
 {
     public interface IF5Service
     {

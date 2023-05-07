@@ -1,4 +1,4 @@
-﻿namespace Domain
+﻿namespace StegSharp.Domain
 {
     /// <summary>
     /// JPEG markers

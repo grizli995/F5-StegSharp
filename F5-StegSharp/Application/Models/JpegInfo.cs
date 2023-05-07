@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Application.Models
+namespace StegSharp.Application.Models
 {
     public class JpegInfo
     {
@@ -24,6 +24,12 @@ namespace Application.Models
             QuantizationTables = new JpegQuantizationTable[2];
             HuffmanTableData = new JpegHuffmanTableData();
             HuffmanTables = new List<JpegHuffmanTable>();
+            Components = new JpegComponent[] 
+            {
+                new JpegComponent(1),
+                new JpegComponent(2),
+                new JpegComponent(3)
+            };
         }
     }
 }

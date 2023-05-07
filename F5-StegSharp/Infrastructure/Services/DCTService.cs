@@ -1,12 +1,12 @@
-﻿using Application.Common.Interfaces;
-using Application.Models;
-using Domain;
-using Infrastructure.Util.Extensions;
+﻿using StegSharp.Application.Common.Interfaces;
+using StegSharp.Application.Models;
+using StegSharp.Domain;
+using StegSharp.Infrastructure.Util.Extensions;
 using JpegLibrary;
 using MethodTimer;
 using System.Runtime.CompilerServices;
 
-namespace Infrastructure.Services
+namespace StegSharp.Infrastructure.Services
 {
     public class DCTService : IDCTService
     {

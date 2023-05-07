@@ -1,7 +1,7 @@
 ﻿using JpegLibrary;
-using Application.Common.Exceptions;
+using StegSharp.Application.Common.Exceptions;
 
-namespace Application.Common.Interfaces
+namespace StegSharp.Application.Common.Interfaces
 {
     public interface IF5ParameterCalculatorService
     {

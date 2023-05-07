@@ -1,7 +1,7 @@
 ﻿using JpegLibrary;
 using System.IO;
 
-namespace Application.Common.Interfaces
+namespace StegSharp.Application.Common.Interfaces
 {
     public interface IHuffmanEncodingService
     {

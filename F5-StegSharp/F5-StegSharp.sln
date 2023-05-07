@@ -7,19 +7,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FF24E98C-484
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{297DA29A-F5B0-4652-A28B-C403E3D7CDD1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{A9A011E2-90BE-4F9A-954E-C87424A017B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StegSharp.Application", "Application\StegSharp.Application.csproj", "{A9A011E2-90BE-4F9A-954E-C87424A017B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{9889046E-EBA8-4112-812F-AA8B16BC1A56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StegSharp.Domain", "Domain\StegSharp.Domain.csproj", "{9889046E-EBA8-4112-812F-AA8B16BC1A56}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{B3BD7F51-D5AB-4E8B-91A5-0F816F477DBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StegSharp.Infrastructure", "Infrastructure\StegSharp.Infrastructure.csproj", "{B3BD7F51-D5AB-4E8B-91A5-0F816F477DBA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI.Console", "UI.Console\UI.Console.csproj", "{0B9216AE-6571-4BDA-A6FB-C9BBE3B459FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StegSharp.UI.Console", "UI.Console\StegSharp.UI.Console.csproj", "{0B9216AE-6571-4BDA-A6FB-C9BBE3B459FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.UnitTests", "Application.UnitTests\Application.UnitTests.csproj", "{B1656AE5-41B6-431C-801D-24650F7DF342}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmarks", "benchmarks", "{9E6E655B-83FA-462A-B649-458136B29A2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks.Application", "Benchmarks.Application\Benchmarks.Application.csproj", "{5B5C87E3-1AB9-48BB-AD11-46E5E4B79126}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks.Application", "Benchmarks.Application\Benchmarks.Application.csproj", "{5B5C87E3-1AB9-48BB-AD11-46E5E4B79126}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

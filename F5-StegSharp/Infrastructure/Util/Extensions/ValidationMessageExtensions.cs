@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Util.Extensions
+﻿namespace StegSharp.Infrastructure.Util.Extensions
 {
     public static class ValidationMessageExtensions
     {
