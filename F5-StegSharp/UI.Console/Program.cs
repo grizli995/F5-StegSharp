@@ -96,46 +96,5 @@ public class Program
             Console.WriteLine("Embed (e) or extract (ex) ?");
             response = Console.ReadLine();
         }
-
-        ////string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\micpic.jpg"; // replace with the path to your JPEG image file
-        ////string filePathExtract = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavic.jpg"; // replace with the path to your JPEG image file
-        //string filePathExtract = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\Output\\h_test_whatsapp_slika.jpg"; // replace with the path to your JPEG image file
-        ////string filePathExtract = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\Output\\ljubavicMalic-OUTPUT-14042023052620.jpg"; // replace with the path to your JPEG image file
-        //string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\h.jpg"; // replace with the path to your JPEG image file
-        ////string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavicMalic.jpg"; // replace with the path to your JPEG image file
-        //Image image = Image.FromFile(filePath);
-
-        ////var outPath = $"C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\Output\\micpic-OUTPUT-{DateTime.UtcNow.ToString("ddMMyyyyhhmmss")}.jpg";
-        ////var outPath = $"C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\Output\\ljubavicMalic-OUTPUT-{DateTime.UtcNow.ToString("ddMMyyyyhhmmss")}.jpg";
-        //var outPath = $"C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\Output\\h-Stego-OUTPUT-{DateTime.UtcNow.ToString("ddMMyyyyhhmmss")}.jpg";
-        //using (FileStream fileStream = new FileStream(outPath, FileMode.Create, FileAccess.Write))
-        //{
-        //    using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
-        //    {
-        //        var msg = "Look again at that dot. That's here. That's home. That's us. On it everyone you love, everyone you know, everyone you ever heard of, every human being who ever was, lived out their lives. The aggregate of our joy and suffering, thousands of confident religions, ideologies, and economic doctrines, every hunter and forager, every hero and coward, every creator and destroyer of civilization, every king and peasant, every young couple in love, every mother and father, hopeful child, inventor and explorer, every teacher of morals, every corrupt politician, every \"superstar,\" every \"supreme leader,\" every saint and sinner in the history of our species lived there--on a mote of dust suspended in a sunbeam.";
-        //        //originalDCTs = service.Embed(image, "test", "Laza voli Jovanu!! NAJVISE NA CELOM SVETU BREE!", binaryWriter);
-        //        try
-        //        {
-        //            service.Embed(image, "test", msg, binaryWriter);
-        //        }
-        //        catch (CapacityException ce)
-        //        {
-        //            Console.WriteLine("uga buga");
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Console.WriteLine("Generalni uga buga");
-        //        }
-        //    }
-        //}
-
-        ////using (FileStream fileStream = new FileStream(outPath, FileMode.OpenOrCreate, FileAccess.Read))
-        //using (FileStream fileStream = new FileStream(filePathExtract, FileMode.OpenOrCreate, FileAccess.Read))
-        //{
-        //    using (BinaryReader binaryReader = new BinaryReader(fileStream))
-        //    {
-        //        var msg = service.Extract("test", binaryReader);
-        //    }
-        //}
     }
 }
