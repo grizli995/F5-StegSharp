@@ -50,7 +50,7 @@ namespace StegSharp.Infrastructure.Services
 
             if (availableCoefficientCount < messageBitLength)
             {
-                throw new CapacityException("Not enough capacity for the message.");
+                throw new CapacityException($"Not enough capacity for the message. ({availableCoefficientCount}/{messageBitLength}) ", availableCoefficientCount, messageBitLength);
             }
 
             var calculatedEmbeddingRate = messageBitLength / availableCoefficientCount;
