@@ -138,6 +138,12 @@ namespace StegSharp.Infrastructure.Services
 
         private void ExtractMessageBits(int k, byte[] messageBytes, ref int messageByteIndex, ref int messageBitIndex, int hash)
         {
+            if (messageBitIndex == 8)
+            {
+                messageBitIndex = 0;
+                messageByteIndex++;
+            }
+
             int start = GetHashStartIndex(k, messageBytes, messageByteIndex, messageBitIndex);
 
             for (int i = start; i >= 0; i--)
