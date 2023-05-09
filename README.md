@@ -35,7 +35,7 @@ public void ConfigureServices(IServiceCollection services)
 ### Hiding a message in a JPEG image
 
 ```cs
-using F5-StegSharp.Infrastructure;
+using StegSharp.Application.Common.Interfaces;
 
 // ...
 
@@ -46,7 +46,8 @@ stegoService.Embed(image, "password", "Your Secret message", binaryWriter);;
 
 ```cs
 // ...
-using F5Steganography;
+using StegSharp.Application.Common.Interfaces;
+
 var stegoService = serviceProvider.GetService<IF5Service>();
 string message = stegoService.Extract("password", binaryReader);;
 
