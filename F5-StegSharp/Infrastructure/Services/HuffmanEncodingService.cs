@@ -159,6 +159,9 @@ namespace StegSharp.Infrastructure.Services
                 int c = PutBuffer >> 16 & 0xFF;
                 WriteByte(bw, c);
             }
+
+            this._bufferPutBuffer = 0;
+            this._bufferPutBits = 0;
         }
 
         private void EncodeACCoeff(BinaryWriter bw, Tuple<int, int> item, Tuple<int, int>[] coeffTable)
