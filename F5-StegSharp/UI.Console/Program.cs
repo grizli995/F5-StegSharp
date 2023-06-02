@@ -4,6 +4,7 @@ using StegSharp.Application.Models;
 using StegSharp.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Drawing;
+using System.Collections.Generic;
 
 public class Program
 {
@@ -13,7 +14,7 @@ public class Program
         services.AddF5Services();
         var serviceProvider = services.BuildServiceProvider();
         var service = serviceProvider.GetService<IF5Service>();
-
+        var histogramService = serviceProvider.GetService<IHistogramService>();
         Console.WriteLine("Application started.");
 
         string response;
@@ -84,6 +85,64 @@ public class Program
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
+                }
+            }
+            else if (response == "hist")
+            {
+                var imagePath = Console.ReadLine();
+
+                var histValues = histogramService.GetHistogramFromImagePath(imagePath);
+                string csvFilePath = $"C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\Output\\histogram-{DateTime.UtcNow.ToString("ddMMyyyyhhmmss")}.csv";
+                using (var writer = new StreamWriter(csvFilePath))
+                {
+                    // Write header
+                    writer.WriteLine("Key,Value,Color");
+                    int i = 0;
+                    string[] HexColorCodes = new string[]
+                    {
+                        "#FF0000",
+                        "#FFA500",
+                        "#FFFF00",
+                        "#00FF00",
+                        "#00FFFF",
+                        "#0000FF",
+                        "#8A2BE2",
+                        "#FF00FF",
+                        "#800080",
+                        "#FFFFFF"
+                    };
+                    var negativeHisValues = histValues.Where(item => item.Key < 0).OrderBy(item => Math.Abs(item.Key)).ToDictionary(k => k.Key, v => v.Value);
+                    var positiveHisValues = histValues.Where(item => item.Key >= 0).OrderBy(item => Math.Abs(item.Key)).ToDictionary(k => k.Key, v => v.Value);
+
+                    // Write dictionary values
+                    foreach (var pair in positiveHisValues)
+                    {
+                        if(pair.Key == 0)
+                        {
+                            writer.WriteLine($"{pair.Key},{pair.Value},#000000");
+                        }
+                        else
+                        {
+                            var colorIndex = i  % HexColorCodes.Count();
+                            writer.WriteLine($"{pair.Key},{pair.Value},{HexColorCodes[colorIndex]}");
+                        }
+                        i++;
+                    }
+                    i = 1;
+                    // Write dictionary values
+                    foreach (var pair in negativeHisValues)
+                    {
+                        if (pair.Key == 0)
+                        {
+                            writer.WriteLine($"{pair.Key},{pair.Value},#000000");
+                        }
+                        else
+                        {
+                            var colorIndex = i %  HexColorCodes.Count();
+                            writer.WriteLine($"{pair.Key},{pair.Value},{HexColorCodes[colorIndex]}");
+                        }
+                        i++;
+                    }
                 }
             }
             else

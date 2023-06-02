@@ -23,6 +23,7 @@ namespace StegSharp.Infrastructure
             services.AddScoped<IPermutationService, PermutationService>();
             services.AddScoped<IF5ParameterCalculatorService, F5ParameterCalculatorService>();
             services.AddScoped<IF5ExtractingService, F5ExtractingService>();
+            services.AddScoped<IHistogramService, HistogramService>();
 
             return services;
         }
