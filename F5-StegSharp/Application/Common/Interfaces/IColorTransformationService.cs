@@ -1,5 +1,5 @@
 ﻿using StegSharp.Application.Models;
-using System.Drawing;
+using SixLabors.ImageSharp;
 
 namespace StegSharp.Application.Common.Interfaces
 {
@@ -11,6 +11,6 @@ namespace StegSharp.Application.Common.Interfaces
         /// <param name="bmp">Input bitmap</param>
         /// <returns>YCBCR Data containing 3 components for Y, CB and CR.</returns>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
-        public YCBCRData RGBToYCbCr(Bitmap bmp);
+        public YCBCRData RGBToYCbCr(Image<Rgba32> bmp);
     }
 }

@@ -1,6 +1,6 @@
 # F5-StegSharp - Steganography Library for .NET
 
-F5-StegSharp is a lightweight and efficient C# library providing seamless integration of the F5 steganography algorithm in .NET applications. Supports baseline color JPEG images, each step in baseline jpeg encoding,  matrix encoding, and adaptive embedding. Ideal for secure data transmission through image files. 
+F5-StegSharp is a cross-platform lightweight and efficient C# library providing seamless integration of the F5 steganography algorithm in .NET applications. Supports baseline color JPEG images, each step in baseline jpeg encoding,  matrix encoding, and adaptive embedding. Ideal for secure data transmission through image files. 
 
 ## Features
 

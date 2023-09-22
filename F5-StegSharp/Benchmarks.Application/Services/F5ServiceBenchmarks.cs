@@ -1,13 +1,9 @@
-﻿using StegSharp.Application.Common.Interfaces;
-using BenchmarkDotNet.Attributes;
-using StegSharp.Infrastructure;
+﻿using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using StegSharp.Application.Common.Interfaces;
+using StegSharp.Infrastructure;
 
 namespace Benchmarks.Application.Services
 {
@@ -62,13 +58,13 @@ namespace Benchmarks.Application.Services
         private void LoadTestImages()
         {
             string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\micpic.jpg";
-            _imageMicpic = Image.FromFile(filePath);
+            _imageMicpic = Image.Load<Rgba32>(filePath);
 
             filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavic.jpg";
-            _imageLjubavic = Image.FromFile(filePath);
+            _imageLjubavic = Image.Load<Rgba32>(filePath);
 
             filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavicMalic.jpg";
-            _imageLjubavicMalic = Image.FromFile(filePath);
+            _imageLjubavicMalic = Image.Load<Rgba32>(filePath);
         }
     }
 }

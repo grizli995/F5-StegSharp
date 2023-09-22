@@ -2,7 +2,7 @@
 using StegSharp.Application.Common.Interfaces;
 using StegSharp.Application.Models;
 using StegSharp.Infrastructure.Util.Extensions;
-using System.Drawing;
+using SixLabors.ImageSharp;
 
 namespace StegSharp.Infrastructure.Services
 {
@@ -92,7 +92,7 @@ namespace StegSharp.Infrastructure.Services
             if (String.IsNullOrEmpty(outPath))
                 throw new ArgumentNullException(nameof(outPath), nameof(outPath).ToArgumentNullExceptionMessage());
 
-            Image image = Image.FromFile(imagePath);
+            Image<Rgba32> image = Image.Load<Rgba32>(imagePath);
 
             using (FileStream fileStream = new FileStream(outPath, FileMode.Create, FileAccess.Write))
             {
@@ -164,7 +164,7 @@ namespace StegSharp.Infrastructure.Services
             var jpeg = new JpegInfo();
             jpeg.Width = image.Width;
             jpeg.Height = image.Height;
-            jpeg.Bitmap = (Bitmap)image;
+            jpeg.Bitmap = (Image<Rgba32>)image;
             return jpeg;
         }
 

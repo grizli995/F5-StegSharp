@@ -2,7 +2,6 @@
 using StegSharp.Application.Models;
 using StegSharp.Domain;
 using StegSharp.Infrastructure.Util.Extensions;
-using System.Drawing;
 
 namespace StegSharp.Infrastructure.Services
 {
@@ -14,7 +13,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="bmp">Input bitmap</param>
         /// <returns>YCBCR Data containing 3 components for Y, CB and CR.</returns>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
-        public YCBCRData RGBToYCbCr(Bitmap bmp)
+        public YCBCRData RGBToYCbCr(Image<Rgba32> bmp)
         {
             if (bmp == null)
                 throw new ArgumentNullException(nameof(bmp), nameof(bmp).ToArgumentNullExceptionMessage());
@@ -29,13 +28,13 @@ namespace StegSharp.Infrastructure.Services
 
         #region Util
 
-        private void ApplyColorTransform(Bitmap bmp, YCBCRData result)
+        private void ApplyColorTransform(Image<Rgba32> bmp, YCBCRData result)
         {
             for (int i = 0; i < bmp.Height; i++)
             {
                 for (int j = 0; j < bmp.Width; j++)
                 {
-                    var color = bmp.GetPixel(j, i);
+                    var color = bmp[j, i];
                     var r = color.R;
                     var g = color.G;
                     var b = color.B;
