@@ -1,4 +1,4 @@
-﻿using SixLabors.ImageSharp;
+﻿using SkiaSharp;
 
 namespace StegSharp.Application.Common.Interfaces
 {
@@ -12,7 +12,7 @@ namespace StegSharp.Application.Common.Interfaces
         /// <param name="message">Message to embed.</param>
         /// <param name="bw">BinaryWriter where the jpeg will be written.</param>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
-        public void Embed(Image image, string password, string message, BinaryWriter bw);
+        public void Embed(SKBitmap image, string password, string message, BinaryWriter bw);
 
         /// <summary>
         /// Embeds the input message with the provided password using F5 algorithm, and writes jpeg image as output inside the provided BinaryWriter.

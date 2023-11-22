@@ -3,8 +3,7 @@ using StegSharp.Application.Common.Interfaces;
 using StegSharp.Application.Models;
 using StegSharp.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp;
+using SkiaSharp;
 
 public class Program
 {
@@ -27,7 +26,7 @@ public class Program
             {
                 Console.WriteLine("Please provide path to the image you want to hide the message in.");
                 var imageFilePath = Console.ReadLine();
-                Image<Rgba32> image = Image.Load<Rgba32>(imageFilePath);
+                SKBitmap image = SKBitmap.Decode(imageFilePath);
 
                 Console.WriteLine("Please provide a password that will be used for embeding the hidden data.");
                 var password = Console.ReadLine();

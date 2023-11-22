@@ -58,6 +58,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="luminanceTable">Luminance table used for Y color component. If null, will use default table.</param>
         /// <returns>DCTData object which contains quantized MCUs for all 3 color components.</returns>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        [Time]
         public DCTData QuantizeDCT(DCTData input, byte[] chrominanceTable, byte[] luminanceTable)
         {
             if (input == null)
@@ -88,6 +89,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="width">Width</param>
         /// <param name="height">Height</param>
         /// <returns>Three arrays of MCUs which contain values from DCT calculation.</returns>
+        [Time]
         private DCTData ApplyDCT(DCTData dctData, int width, int height)
         {
             dctData.YDCTData = ApplyDCTToColorComponent(dctData.YDCTData, width, height);
@@ -104,6 +106,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="width">Width</param>
         /// <param name="height">Height</param>
         /// <returns>An array of MCUs which contain values from DCT calculation.</returns>
+        [Time]
         private JpegBlock8x8F[] ApplyDCTToColorComponent(JpegBlock8x8F[] input, int width, int height)
         {
             JpegBlock8x8F[] result = new JpegBlock8x8F[width * height / 64];
@@ -193,6 +196,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="input">DCT data for 1 color component.</param>
         /// <param name="quantizationTable">Quantization table.</param>
         /// <returns>Returns new DCTData object with quantized data.</returns>
+        [Time]
         private JpegBlock8x8F[] QuantizeDCTComponent(JpegBlock8x8F[] input, byte[] quantizationTable)
         {
             var result = new JpegBlock8x8F[input.Length];

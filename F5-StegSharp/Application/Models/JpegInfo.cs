@@ -1,10 +1,10 @@
-﻿using SixLabors.ImageSharp;
+﻿using SkiaSharp;
 
 namespace StegSharp.Application.Models
 {
     public class JpegInfo
     {
-        public Image<Rgba32> Bitmap { get; set; }
+        public SKBitmap Bitmap { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public int HorizontalPixelDensity { get; set; }

@@ -3,6 +3,7 @@ using StegSharp.Infrastructure.Util.Extensions;
 using JpegLibrary;
 using System.Numerics;
 using System.Text;
+using MethodTimer;
 
 namespace StegSharp.Infrastructure.Services
 {
@@ -17,6 +18,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="reverse">If false permutate, if true permutate in the reverse order.</param>
         /// <returns>Permutated mcu array.</returns>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        [Time]
         public JpegBlock8x8F[] PermutateArray(string password, JpegBlock8x8F[] inputArray, bool reverse)
         {
             if (inputArray == null || inputArray.Length <= 0)

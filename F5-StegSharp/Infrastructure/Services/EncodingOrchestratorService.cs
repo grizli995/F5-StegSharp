@@ -2,6 +2,7 @@
 using StegSharp.Application.Models;
 using StegSharp.Infrastructure.Util.Extensions;
 using JpegLibrary;
+using MethodTimer;
 
 namespace StegSharp.Infrastructure.Services
 {
@@ -26,6 +27,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="quantizedDCTData">MCU data to encode</param>
         /// <param name="bw">BinaryWriter</param>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        [Time]
         public void EncodeData(DCTData quantizedDCTData, BinaryWriter bw)
         {
             if (quantizedDCTData == null)
@@ -63,6 +65,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="jpeg">Jpeg information</param>
         /// <param name="bw">BinaryWriter</param>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        [Time]
         public DCTData DecodeData(JpegInfo jpeg, BinaryReader br)
         {
             if (jpeg == null)

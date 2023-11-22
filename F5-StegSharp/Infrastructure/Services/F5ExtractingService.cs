@@ -1,4 +1,5 @@
-﻿using StegSharp.Application.Common.Exceptions;
+﻿using MethodTimer;
+using StegSharp.Application.Common.Exceptions;
 using StegSharp.Application.Common.Interfaces;
 using StegSharp.Application.Models;
 using StegSharp.Infrastructure.Util.Extensions;
@@ -29,6 +30,7 @@ namespace StegSharp.Infrastructure.Services
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
         /// <exception cref="MatrixEncodingException">Thrown if matrix encoding parameters are invalid.</exception>
         /// <returns>Extracted message</returns>
+        [Time]
         public string Extract(DCTData dctData, string password)
         {
             if (dctData == null)

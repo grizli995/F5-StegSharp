@@ -1,4 +1,6 @@
-﻿using StegSharp.Application.Common.Interfaces;
+﻿using MethodTimer;
+using SkiaSharp;
+using StegSharp.Application.Common.Interfaces;
 using StegSharp.Application.Models;
 using StegSharp.Domain;
 using StegSharp.Infrastructure.Util.Extensions;
@@ -13,7 +15,8 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="bmp">Input bitmap</param>
         /// <returns>YCBCR Data containing 3 components for Y, CB and CR.</returns>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
-        public YCBCRData RGBToYCbCr(Image<Rgba32> bmp)
+        [Time]
+        public YCBCRData RGBToYCbCr(SKBitmap bmp)
         {
             if (bmp == null)
                 throw new ArgumentNullException(nameof(bmp), nameof(bmp).ToArgumentNullExceptionMessage());
@@ -28,16 +31,16 @@ namespace StegSharp.Infrastructure.Services
 
         #region Util
 
-        private void ApplyColorTransform(Image<Rgba32> bmp, YCBCRData result)
+        private void ApplyColorTransform(SKBitmap bmp, YCBCRData result)
         {
             for (int i = 0; i < bmp.Height; i++)
             {
                 for (int j = 0; j < bmp.Width; j++)
                 {
-                    var color = bmp[j, i];
-                    var r = color.R;
-                    var g = color.G;
-                    var b = color.B;
+                    var color = bmp.GetPixel(j, i);
+                    var r = color.Red;
+                    var g = color.Green;
+                    var b = color.Blue;
 
                     var y = RGBToYCBCR.CalculateY(r, g, b);
                     var cb = RGBToYCBCR.CalculateCB(r, g, b);

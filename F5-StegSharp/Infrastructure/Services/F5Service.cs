@@ -2,7 +2,8 @@
 using StegSharp.Application.Common.Interfaces;
 using StegSharp.Application.Models;
 using StegSharp.Infrastructure.Util.Extensions;
-using SixLabors.ImageSharp;
+using SkiaSharp;
+using MethodTimer;
 
 namespace StegSharp.Infrastructure.Services
 {
@@ -38,7 +39,8 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="message">Message to embed.</param>
         /// <param name="bw">BinaryWriter where the jpeg will be written.</param>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
-        public void Embed(Image image, string password, string message, BinaryWriter bw)
+        [Time]
+        public void Embed(SKBitmap image, string password, string message, BinaryWriter bw)
         {
             //Validate inputs and create jpegInfo object
             if (image == null)
@@ -84,6 +86,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="password">Password used for embedding the message.</param>
         /// <param name="message">Message to embed.</param>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        [Time]
         public void Embed(string imagePath, string outPath, string password, string message)
         {
             if (String.IsNullOrEmpty(imagePath))
@@ -92,7 +95,7 @@ namespace StegSharp.Infrastructure.Services
             if (String.IsNullOrEmpty(outPath))
                 throw new ArgumentNullException(nameof(outPath), nameof(outPath).ToArgumentNullExceptionMessage());
 
-            Image<Rgba32> image = Image.Load<Rgba32>(imagePath);
+            SKBitmap image = SKBitmap.Decode(imagePath);
 
             using (FileStream fileStream = new FileStream(outPath, FileMode.Create, FileAccess.Write))
             {
@@ -110,6 +113,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="br">BinaryWriter where the jpeg will be written.</param>
         /// <returns>Extracted message.</returns>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        [Time]
         public string Extract(string password, BinaryReader br)
         {
             //Validate inputs and create jpegInfo object
@@ -140,6 +144,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="imagePath">Path to the Image to embed the message in.</param>
         /// <returns>Extracted message.</returns>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        [Time]
         public string Extract(string imagePath, string password)
         {
             if (String.IsNullOrEmpty(imagePath))
@@ -159,12 +164,12 @@ namespace StegSharp.Infrastructure.Services
 
         #region Util
 
-        private JpegInfo CreateJpegInfo(Image image)
+        private JpegInfo CreateJpegInfo(SKBitmap image)
         {
             var jpeg = new JpegInfo();
             jpeg.Width = image.Width;
             jpeg.Height = image.Height;
-            jpeg.Bitmap = (Image<Rgba32>)image;
+            jpeg.Bitmap = (SKBitmap)image;
             return jpeg;
         }
 

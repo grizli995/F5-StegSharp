@@ -1,4 +1,5 @@
-﻿using StegSharp.Application.Common.Interfaces;
+﻿using MethodTimer;
+using StegSharp.Application.Common.Interfaces;
 using StegSharp.Application.Models;
 using StegSharp.Infrastructure.Util.Extensions;
 using System.Collections;
@@ -28,6 +29,7 @@ namespace StegSharp.Infrastructure.Services
         /// <param name="message">Message to embed.</param>
         /// <returns>DCTData object with modified values based on the embedded message. </returns>
         /// <exception cref="ArgumentNullException">Thrown if validation is unsuccessful.</exception>
+        [Time]
         public DCTData Embed(DCTData quantizedData, string password, string message)
         {
             if (quantizedData == null || quantizedData.YDCTData.Length <= 0)
@@ -71,6 +73,7 @@ namespace StegSharp.Infrastructure.Services
 
         #region Util
 
+        [Time]
         private float[] EmbedMessage(float[] coeffs, string message, int k, int n, int lastModifiedIndex)
         {
             byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);

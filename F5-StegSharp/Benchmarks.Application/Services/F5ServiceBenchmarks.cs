@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using SkiaSharp;
 using StegSharp.Application.Common.Interfaces;
 using StegSharp.Infrastructure;
 
@@ -13,7 +12,7 @@ namespace Benchmarks.Application.Services
     public class F5ServiceBenchmarks
     {
         private IF5Service _f5Service;
-        private Image _imageMicpic, _imageLjubavic, _imageLjubavicMalic;
+        private SKBitmap _imageMicpic, _imageLjubavic, _imageLjubavicMalic;
 
         public F5ServiceBenchmarks()
         {
@@ -57,14 +56,14 @@ namespace Benchmarks.Application.Services
 
         private void LoadTestImages()
         {
-            string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\micpic.jpg";
-            _imageMicpic = Image.Load<Rgba32>(filePath);
+            //string filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\micpic.jpg";
+            //_imageMicpic = SKBitmap.lo(filePath);
 
-            filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavic.jpg";
-            _imageLjubavic = Image.Load<Rgba32>(filePath);
+            //filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavic.jpg";
+            //_imageLjubavic = Image.Load<Rgba32>(filePath);
 
-            filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavicMalic.jpg";
-            _imageLjubavicMalic = Image.Load<Rgba32>(filePath);
+            //filePath = "C:\\Files\\Faks\\Faks\\Diplomski rad\\Implementacija\\F5-StegSharp\\F5-StegSharp\\ljubavicMalic.jpg";
+            //_imageLjubavicMalic = Image.Load<Rgba32>(filePath);
         }
     }
 }
