@@ -56,6 +56,11 @@ namespace StegSharp.Infrastructure.Services
             return BufferedResult;
         }
 
+        public void Reset()
+        {
+            Initialize();
+        }
+
         private void Initialize()
         {
             BufferedByte = 0;

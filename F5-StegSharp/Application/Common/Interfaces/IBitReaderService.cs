@@ -10,5 +10,8 @@
         /// <param name="reset">If true - resets the buffered value to 0.</param>
         /// <returns></returns>
         int Read(BinaryReader br, bool reset);
+
+
+        void Reset();
     }
 }

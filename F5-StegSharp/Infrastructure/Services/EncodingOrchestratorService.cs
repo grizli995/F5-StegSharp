@@ -92,6 +92,8 @@ namespace StegSharp.Infrastructure.Services
                 prevDc_Cr = (int)result.CRDCTData[i][0];
             }
 
+            _huffmanDecodingService.ResetBitReader();
+
             return result;
         }
 

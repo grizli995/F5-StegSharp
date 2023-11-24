@@ -63,6 +63,12 @@ namespace StegSharp.Infrastructure.Services
             return DecodeAC(br, _acLuminanceCoeffDict);
         }
 
+
+        public void ResetBitReader()
+        {
+            _bitReaderService.Reset();
+        }
+
         #region Util
 
         private void InitHuffmanTables()

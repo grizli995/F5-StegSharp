@@ -33,5 +33,7 @@ namespace StegSharp.Application.Common.Interfaces
         /// <param name="bw"></param>
         /// <returns></returns>
         JpegBlock8x8F DecodeLuminanceAC(BinaryReader bw);
+
+        void ResetBitReader();
     }
 }
